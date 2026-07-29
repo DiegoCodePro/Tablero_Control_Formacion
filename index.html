@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tecnologías para Aprender - Tablero de Control</title>
+    <meta name="description" content="Tablero de control del Plan de Acción 2026 de la Subdirección de Formación e Innovación de Tecnologías para Aprender.">
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                            950: '#1e1b4b'
+                        },
+                        darkbg: {
+                            DEFAULT: '#0f172a',
+                            card: '#1e293b',
+                            border: '#334155'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- SheetJS CDN for Excel Parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-100 min-h-screen font-sans antialiased transition-colors duration-300">
+
+    <!-- APP CONTAINER -->
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-darkbg-border w-72 flex-shrink-0 flex flex-col z-30 transition-transform duration-300 md:translate-x-0 -translate-x-full absolute md:relative h-full">
+
+            <!-- Brand Logo -->
+            <div class="p-4 border-b border-slate-200 dark:border-darkbg-border flex items-center justify-between flex-shrink-0">
+                <button onclick="goToSummary()" class="flex items-center justify-center transition-all hover:opacity-90 active:scale-[0.98] focus:outline-none max-w-[80%]">
+                    <img src="logo.png" alt="Tecnologías para Aprender" class="h-12 w-auto object-contain">
+                </button>
+                <button onclick="toggleSidebar()" class="md:hidden text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 p-1">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 px-3 py-4 overflow-y-auto space-y-1">
+                <p class="text-[9px] font-bold tracking-widest text-slate-400 uppercase px-3 mb-3 mt-1">Subdirección de Formación e Innovación</p>
+
+                <!-- Plan de Acción (main tab) con submenú desplegable -->
+                <div id="plan-accion-wrapper">
+                    <button onclick="togglePlanAccionMenu()" id="btn-tablero"
+                        class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50 btn-active">
+                        <i class="fa-solid fa-chart-line text-base flex-shrink-0"></i>
+                        <span class="text-sm flex-1 text-left">Plan de Acción</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] submenu-chevron opacity-70" id="submenu-chevron"></i>
+                    </button>
+
+                    <!-- Sub-indices del Plan de Acción (aparece al hover) -->
+                    <div id="sub-indices-menu" class="pl-3 space-y-0.5 mt-1">
+                        <!-- Populated dynamically by JS -->
+                    </div>
+                </div>
+
+                <!-- Estrategias -->
+                <button onclick="switchTab('estrategias')" id="btn-estrategias"
+                    class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50">
+                    <i class="fa-solid fa-chess-knight text-base flex-shrink-0"></i>
+                    <span class="text-sm">Estrategias</span>
+                </button>
+
+                <div class="py-3">
+                    <div class="border-t border-slate-200 dark:border-darkbg-border"></div>
+                </div>
+
+                <button onclick="switchTab('eventos')" id="btn-eventos"
+                    class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50">
+                    <i class="fa-solid fa-calendar-days text-base"></i>
+                    <span class="text-sm">Agenda de Eventos</span>
+                </button>
+
+                <button onclick="switchTab('noticias')" id="btn-noticias"
+                    class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50">
+                    <i class="fa-solid fa-newspaper text-base"></i>
+                    <span class="text-sm">Noticias y Novedades</span>
+                </button>
+
+                <div class="py-3">
+                    <div class="border-t border-slate-200 dark:border-darkbg-border"></div>
+                </div>
+
+                <p class="text-[9px] font-bold tracking-widest text-slate-400 uppercase px-3 mb-2">Herramientas</p>
+
+                <!-- Admin Action buttons shown only when logged in -->
+                <div id="admin-actions-menu" class="hidden space-y-1">
+                    <button onclick="openImportModal()"
+                        class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-semibold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-950/60 transition-all">
+                        <i class="fa-solid fa-file-excel text-base"></i>
+                        <span>Importar Excel</span>
+                    </button>
+                    <button onclick="exportData()"
+                        class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-semibold bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-950/60 transition-all">
+                        <i class="fa-solid fa-download text-base"></i>
+                        <span>Exportar Respaldo</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Sidebar Footer & Login Toggle -->
+            <div class="p-4 border-t border-slate-200 dark:border-darkbg-border flex-shrink-0">
+                <div id="logged-out-user" class="flex flex-col space-y-3">
+                    <button onclick="openLoginModal()"
+                        class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-lg shadow-brand-500/20 hover:shadow-brand-500/30 transition-all duration-200 text-sm">
+                        <i class="fa-solid fa-lock text-xs"></i>
+                        <span>Ingreso Administrador</span>
+                    </button>
+                </div>
+                <div id="logged-in-user" class="hidden flex flex-col space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-md flex-shrink-0">
+                            AD
+                        </div>
+                        <div class="overflow-hidden">
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">Administrador</h4>
+                            <p class="text-xs text-slate-400 truncate">Tecnologías para Aprender</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()"
+                        class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-red-50 hover:text-red-600 dark:bg-slate-800 dark:hover:bg-red-950/30 dark:hover:text-red-400 text-slate-600 dark:text-slate-300 font-semibold rounded-xl transition-all duration-200 text-sm">
+                        <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN LAYOUT CONTENT -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- HEADER -->
+            <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-darkbg-border h-18 px-5 md:px-8 flex items-center justify-between z-20 flex-shrink-0 py-4">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="md:hidden text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:block">Subdirección de Formación e Innovación</h2>
+                        <h1 class="text-base md:text-lg font-extrabold text-slate-800 dark:text-slate-100" id="header-title">Plan de Acción — Avances</h1>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <!-- Admin Indicator Badge -->
+                    <div id="admin-badge" class="hidden items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 text-xs font-extrabold tracking-wide uppercase border border-emerald-200 dark:border-emerald-900">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>Admin</span>
+                    </div>
+
+                    <!-- Theme Toggle -->
+                    <button onclick="toggleDarkMode()" class="p-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 rounded-xl transition-all duration-200 flex items-center justify-center" title="Cambiar tema">
+                        <i class="fa-solid fa-moon dark:hidden text-base"></i>
+                        <i class="fa-solid fa-sun hidden dark:block text-base"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- VIEW CONTENT (SCROLLABLE) -->
+            <div class="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-slate-950/30 p-5 md:p-8">
+
+                <!-- ==================== TAB 1: TABLERO DE CONTROL ==================== -->
+                <section id="view-tablero" class="active-view">
+
+                    <!-- ---- RESUMEN GENERAL (default view) ---- -->
+                    <div id="tablero-resumen" class="space-y-7">
+
+                        <!-- KPI CARDS GRID -->
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                            <!-- KPI 1: Acciones Totales -->
+                            <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group">
+                                <div class="space-y-2">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Acciones Totales</span>
+                                    <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight" id="kpi-acciones-totales">0</h3>
+                                    <span class="text-xs text-slate-400" id="kpi-acciones-completas">0 completadas</span>
+                                </div>
+                                <div class="p-3.5 bg-brand-500/10 dark:bg-brand-500/20 text-brand-500 dark:text-brand-400 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fa-solid fa-list-check text-xl"></i>
+                                </div>
+                                <div class="absolute -right-4 -bottom-4 text-brand-500/[0.04] text-8xl font-black pointer-events-none select-none">#</div>
+                            </div>
+
+                            <!-- KPI 2: Eventos Programados -->
+                            <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group cursor-pointer" onclick="switchTab('eventos')" title="Ver agenda de eventos">
+                                <div class="space-y-2">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Eventos</span>
+                                    <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight" id="kpi-eventos-totales">0</h3>
+                                    <span class="text-xs text-slate-400">En la agenda 2026</span>
+                                </div>
+                                <div class="p-3.5 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fa-solid fa-calendar-days text-xl"></i>
+                                </div>
+                                <div class="absolute -right-4 -bottom-4 text-emerald-500/[0.04] text-8xl font-black pointer-events-none select-none">E</div>
+                            </div>
+
+                            <!-- KPI 3: Meta Centros de Interés -->
+                            <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group cursor-pointer" onclick="switchSubTab('act-4')" title="Ver detalle de Centros de Interés">
+                                <div class="space-y-2">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Meta CI Total</span>
+                                    <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight" id="kpi-ci">1,500</h3>
+                                    <span class="text-xs text-slate-400">Centros de Interés 2026</span>
+                                </div>
+                                <div class="p-3.5 bg-purple-500/10 dark:bg-purple-500/20 text-purple-500 dark:text-purple-400 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fa-solid fa-school text-xl"></i>
+                                </div>
+                                <div class="absolute -right-4 -bottom-4 text-purple-500/[0.04] text-8xl font-black pointer-events-none select-none">CI</div>
+                            </div>
+
+                            <!-- KPI 4: Meta Docentes -->
+                            <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group">
+                                <div class="space-y-2">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Meta Docentes</span>
+                                    <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight" id="kpi-docentes">3,000</h3>
+                                    <span class="text-xs text-slate-400">Formados y acompañados</span>
+                                </div>
+                                <div class="p-3.5 bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-500 dark:text-cyan-400 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fa-solid fa-users text-xl"></i>
+                                </div>
+                                <div class="absolute -right-4 -bottom-4 text-cyan-500/[0.04] text-8xl font-black pointer-events-none select-none">D</div>
+                            </div>
+                        </div>
+
+                        <!-- GRAPHICS AND INTERACTIVE CHARTS -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Chart 1: Progress Circle (Donut) / Reloj de Avance General -->
+                            <div class="glass-card p-6 flex flex-col justify-between">
+                                <div class="border-b border-slate-100 dark:border-darkbg-border pb-4 mb-4 flex justify-between items-center">
+                                    <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Avance General</h4>
+                                    <i class="fa-solid fa-clock text-slate-400"></i>
+                                </div>
+                                <div class="flex flex-col items-center justify-center py-6 relative">
+                                    <!-- Reloj de Avance Semicircular (Tacómetro 4 sectores 3D) -->
+                                    <svg class="w-72 h-auto" viewBox="0 0 100 80">
+                                         <!-- Definitions for 3D gradients and drop shadows -->
+                                         <defs>
+                                             <!-- Matte Red Gradient (0% - 25%) -->
+                                             <radialGradient id="red-3d" cx="50" cy="50" r="40" gradientUnits="userSpaceOnUse">
+                                                 <stop offset="60%" stop-color="#b91c1c" />
+                                                 <stop offset="78%" stop-color="#fca5a5" />
+                                                 <stop offset="100%" stop-color="#ef4444" />
+                                             </radialGradient>
+
+                                             <!-- Matte Orange Gradient (25% - 50%) -->
+                                             <radialGradient id="orange-3d" cx="50" cy="50" r="40" gradientUnits="userSpaceOnUse">
+                                                 <stop offset="60%" stop-color="#c2410c" />
+                                                 <stop offset="78%" stop-color="#fed7aa" />
+                                                 <stop offset="100%" stop-color="#ea580c" />
+                                             </radialGradient>
+
+                                             <!-- Matte Yellow Gradient (50% - 75%) -->
+                                             <radialGradient id="yellow-3d" cx="50" cy="50" r="40" gradientUnits="userSpaceOnUse">
+                                                 <stop offset="60%" stop-color="#b45309" />
+                                                 <stop offset="78%" stop-color="#fef08a" />
+                                                 <stop offset="100%" stop-color="#d97706" />
+                                             </radialGradient>
+
+                                             <!-- Matte Green Gradient (75% - 100%) -->
+                                             <radialGradient id="green-3d" cx="50" cy="50" r="40" gradientUnits="userSpaceOnUse">
+                                                 <stop offset="60%" stop-color="#15803d" />
+                                                 <stop offset="78%" stop-color="#bbf7d0" />
+                                                 <stop offset="100%" stop-color="#16a34a" />
+                                             </radialGradient>
+
+                                             <!-- Drop shadow filter for 3D depth -->
+                                             <filter id="gauge-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                                                 <feDropShadow dx="0" dy="2.5" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.35" />
+                                             </filter>
+                                         </defs>
+
+                                         <!-- Semicircular Gauge Geometry with 3D Drop Shadow -->
+                                         <g filter="url(#gauge-shadow)">
+                                             <!-- Semicircular Master Background (Dark outline) -->
+                                             <path d="M 18 50 A 32 32 0 0 1 82 50" fill="none" stroke="#1e293b" stroke-width="17.2" stroke-linecap="butt" class="opacity-95" />
+
+                                             <!-- Colored Sectors with 3D Gradients -->
+                                             <!-- Sector 1: 0% - 25% (Red Matte) -->
+                                             <path d="M 18 50 A 32 32 0 0 1 27.37 27.37" fill="none" stroke="url(#red-3d)" stroke-width="15.2" />
+                                             
+                                             <!-- Sector 2: 25% - 50% (Orange Matte) -->
+                                             <path d="M 27.37 27.37 A 32 32 0 0 1 50 18" fill="none" stroke="url(#orange-3d)" stroke-width="15.2" />
+                                             
+                                             <!-- Sector 3: 50% - 75% (Yellow Matte) -->
+                                             <path d="M 50 18 A 32 32 0 0 1 72.63 27.37" fill="none" stroke="url(#yellow-3d)" stroke-width="15.2" />
+                                             
+                                             <!-- Sector 4: 75% - 100% (Green Matte) -->
+                                             <path d="M 72.63 27.37 A 32 32 0 0 1 82 50" fill="none" stroke="url(#green-3d)" stroke-width="15.2" />
+
+                                             <!-- Sector Dividers (Dark lines separating sectors) -->
+                                             <line x1="21.72" y1="21.72" x2="33.03" y2="33.03" stroke="#1e293b" stroke-width="0.75" />
+                                             <line x1="50" y1="10" x2="50" y2="26" stroke="#1e293b" stroke-width="0.75" />
+                                             <line x1="78.28" y1="21.72" x2="66.97" y2="33.03" stroke="#1e293b" stroke-width="0.75" />
+                                             <line x1="10" y1="50" x2="26" y2="50" stroke="#1e293b" stroke-width="0.75" />
+                                             <line x1="74" y1="50" x2="90" y2="50" stroke="#1e293b" stroke-width="0.75" />
+                                         </g>
+
+                                         <!-- Text Labels (Outside shadow to remain super crisp) -->
+                                         <text x="5" y="53" text-anchor="end" class="text-[5px] font-extrabold fill-slate-500 dark:fill-slate-400">0%</text>
+                                         <text x="19" y="19" text-anchor="end" class="text-[5px] font-extrabold fill-slate-500 dark:fill-slate-400">25%</text>
+                                         <text x="50" y="6" text-anchor="middle" class="text-[5px] font-extrabold fill-slate-500 dark:fill-slate-400">50%</text>
+                                         <text x="81" y="19" text-anchor="start" class="text-[5px] font-extrabold fill-slate-500 dark:fill-slate-400">75%</text>
+                                         <text x="95" y="53" text-anchor="start" class="text-[5px] font-extrabold fill-slate-500 dark:fill-slate-400">100%</text>
+
+                                         <!-- Needle Group (Yellow Arrow with dark border) with 3D shadow -->
+                                         <g id="chart-gauge-needle" filter="url(#gauge-shadow)" style="transform-origin: 50px 50px; transform: rotate(0deg); transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                                             <!-- Dark Outline Needle underneath -->
+                                             <line x1="50" y1="50" x2="18" y2="50" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+                                             <polygon points="18,50 25.5,46.2 23.5,50 25.5,53.8" fill="#1e293b" />
+                                             
+                                             <!-- Yellow Pointer on top -->
+                                             <line x1="50" y1="50" x2="18.8" y2="50" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" />
+                                             <polygon points="18.8,50 25,47.2 23.4,50 25,52.8" fill="#fbbf24" />
+                                         </g>
+                                         <!-- Needle Center Pin (Yellow circle at base with dark outline) -->
+                                         <circle cx="50" cy="50" r="4.5" fill="#1e293b" filter="url(#gauge-shadow)" />
+                                         <circle cx="50" cy="50" r="3.2" fill="#fbbf24" filter="url(#gauge-shadow)" />
+
+                                         <!-- Centered/Bottom Value Text (Inside SVG, below pivot) -->
+                                         <text x="50" y="69" text-anchor="middle" fill="currentColor" class="text-[16px] font-black text-slate-800 dark:text-slate-100" id="gauge-value">0%</text>
+                                         <text x="50" y="77" text-anchor="middle" fill="currentColor" class="text-[3.5px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Avance Plan</text>
+                                    </svg>
+                                </div>
+                                <div class="mt-2 text-center text-xs font-semibold text-slate-500 dark:text-slate-400" id="gauge-legend">
+                                    Avance consolidado de todas las acciones del plan
+                                </div>
+                            </div>
+
+                            <!-- Chart 2: Dynamic Bar Chart of all 9 Actions -->
+                            <div class="glass-card p-6 col-span-1 lg:col-span-2 flex flex-col">
+                                <div class="border-b border-slate-100 dark:border-darkbg-border pb-4 mb-5 flex justify-between items-center">
+                                    <div>
+                                        <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Avance por Acción</h4>
+                                        <p class="text-[10px] text-slate-400 mt-0.5">Haz clic en una barra para ver el detalle</p>
+                                    </div>
+                                    <i class="fa-solid fa-chart-column text-slate-400"></i>
+                                </div>
+                                <div class="flex-1 flex flex-col justify-between gap-3" id="bar-chart-container">
+                                    <div class="text-center text-slate-400 py-10">Cargando gráfico...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ACTIONS LIST / TABLE -->
+                        <div class="glass-card p-6 space-y-5">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-darkbg-border pb-5">
+                                <div class="space-y-1">
+                                    <h4 class="font-bold text-lg text-slate-800 dark:text-slate-100">Desglose Completo del Plan</h4>
+                                    <p class="text-xs text-slate-400">Haz clic en cualquier fila para ver el detalle y seguimiento mensual.</p>
+                                </div>
+                            </div>
+
+                            <!-- FILTERS BAR -->
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                                    </span>
+                                    <input type="text" id="filter-search" oninput="filterActions()" placeholder="Buscar acción..."
+                                        class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                                </div>
+                                <div>
+                                    <select id="filter-line" onchange="filterActions()"
+                                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                                        <option value="todos">Todas las Líneas</option>
+                                        <option value="Formación">Línea de Formación</option>
+                                        <option value="Innovación">Línea de Innovación</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <select id="filter-status" onchange="filterActions()"
+                                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                                        <option value="todos">Todos los Estados</option>
+                                        <option value="Planeado">Planeado</option>
+                                        <option value="En Curso">En Curso</option>
+                                        <option value="Completado">Completado</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- TABLE -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-slate-150 dark:border-darkbg-border text-slate-400 text-[10px] font-extrabold uppercase tracking-wider">
+                                            <th class="py-3 px-4">Acción / Línea</th>
+                                            <th class="py-3 px-4 text-center">Avance</th>
+                                            <th class="py-3 px-4">Ejecutado / Meta</th>
+                                            <th class="py-3 px-4">Estado</th>
+                                            <th class="py-3 px-4 text-right"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="actions-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/50 text-sm">
+                                        <!-- Loaded dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END RESUMEN GENERAL -->
+
+                    <!-- ---- DETALLE DE ACCIÓN (shown when a sub-index is selected) ---- -->
+                    <div id="tablero-detalle" class="hidden">
+                        <!-- Populated dynamically by JS renderActionDetail() -->
+                    </div>
+
+                </section>
+                <!-- END TAB 1 -->
+
+                <!-- ==================== TAB 2: CALENDARIO DE EVENTOS ==================== -->
+                <section id="view-eventos" class="space-y-8 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <h3 class="text-xl font-extrabold text-slate-800 dark:text-slate-100">Agenda de la Subdirección</h3>
+                            <p class="text-xs text-slate-400">Talleres, capacitaciones y encuentros programados.</p>
+                        </div>
+                        <button id="btn-add-evento" onclick="openEventModal()"
+                            class="hidden items-center justify-center space-x-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                            <span>Programar Evento</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="events-grid">
+                        <!-- Events loaded dynamically -->
+                    </div>
+                </section>
+
+                <!-- ==================== TAB 3: NOTICIAS ==================== -->
+                <section id="view-noticias" class="space-y-8 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <h3 class="text-xl font-extrabold text-slate-800 dark:text-slate-100">Mural de Novedades e Hitos</h3>
+                            <p class="text-xs text-slate-400">Últimos logros y boletines de Tecnologías para Aprender.</p>
+                        </div>
+                        <button id="btn-add-noticia" onclick="openNewsModal()"
+                            class="hidden items-center justify-center space-x-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                            <span>Publicar Noticia</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="news-grid">
+                        <!-- News loaded dynamically -->
+                    </div>
+                </section>
+
+                <!-- ==================== TAB 4: ESTRATEGIAS ==================== -->
+                <section id="view-estrategias" class="space-y-8 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <h3 class="text-xl font-extrabold text-slate-800 dark:text-slate-100">Estrategias de Formación e Innovación</h3>
+                            <p class="text-xs text-slate-400">Iniciativas y líneas de acción estratégicas de la subdirección.</p>
+                        </div>
+                        <button id="btn-add-estrategia" onclick="openEstrategiaModal()"
+                            class="hidden items-center justify-center space-x-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                            <span>Nueva Estrategia</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="strategies-grid">
+                        <!-- Strategies loaded dynamically -->
+                    </div>
+                </section>
+
+            </div>
+            <!-- END VIEW CONTENT -->
+        </main>
+    </div>
+
+    <!-- ==================== MODAL: LOGIN ==================== -->
+    <div id="modal-login" class="modal">
+        <div class="modal-content glass-card max-w-md w-full p-8 space-y-6 relative overflow-hidden">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center space-y-2">
+                <div class="inline-flex p-3 bg-brand-500/10 dark:bg-brand-500/20 text-brand-500 rounded-2xl mb-2">
+                    <i class="fa-solid fa-shield-halved text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-extrabold text-slate-800 dark:text-slate-100">Portal del Administrador</h3>
+                <p class="text-xs text-slate-400">Ingresa tus credenciales para administrar el plan.</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Usuario</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                            <i class="fa-solid fa-user text-sm"></i>
+                        </span>
+                        <input type="text" id="login-username" required
+                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                            placeholder="admin">
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Contraseña</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                            <i class="fa-solid fa-key text-sm"></i>
+                        </span>
+                        <input type="password" id="login-password" required
+                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                            placeholder="••••••••">
+                    </div>
+                </div>
+
+                <div id="login-error" class="hidden p-3 rounded-lg bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-xs font-semibold flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>Usuario o contraseña incorrectos.</span>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-brand-500/20 text-sm">
+                    Iniciar Sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: EVENTO (ADD/EDIT) ==================== -->
+    <div id="modal-evento" class="modal">
+        <div class="modal-content glass-card max-w-lg w-full p-8 space-y-6 relative overflow-hidden">
+            <button onclick="closeEventModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-xl font-extrabold text-slate-800 dark:text-slate-100" id="event-modal-title">Programar Evento</h3>
+
+            <form onsubmit="saveEvent(event)" class="space-y-4">
+                <input type="hidden" id="event-id">
+
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Título del Evento</label>
+                    <input type="text" id="event-name" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Fecha</label>
+                        <input type="date" id="event-date" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Hora</label>
+                        <input type="time" id="event-time" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Modalidad</label>
+                        <select id="event-mode" required onchange="toggleEventLinkField()" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                            <option value="Virtual">Virtual</option>
+                            <option value="Presencial">Presencial</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1.5" id="event-link-wrapper">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider" id="event-link-label">Enlace / Lugar</label>
+                        <input type="text" id="event-link" placeholder="Ej: Teams link o Auditorio..." required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Descripción</label>
+                    <textarea id="event-desc" rows="3" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" onclick="closeEventModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-xl transition-all">Cancelar</button>
+                    <button type="submit" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-brand-500/20">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: NOTICIA (ADD/EDIT) ==================== -->
+    <div id="modal-noticia" class="modal">
+        <div class="modal-content glass-card max-w-lg w-full p-8 space-y-6 relative overflow-hidden">
+            <button onclick="closeNewsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-xl font-extrabold text-slate-800 dark:text-slate-100" id="news-modal-title">Publicar Noticia</h3>
+
+            <form onsubmit="saveNews(event)" class="space-y-4">
+                <input type="hidden" id="news-id">
+
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Título de la Noticia</label>
+                    <input type="text" id="news-title" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Categoría / Etiqueta</label>
+                        <input type="text" id="news-tag" placeholder="Ej: Formación, Innovación..." required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Fecha</label>
+                        <input type="date" id="news-date" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">URL de Imagen</label>
+                    <input type="text" id="news-img" placeholder="https://images.unsplash.com/..." class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Contenido de la Noticia</label>
+                    <textarea id="news-content" rows="4" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" onclick="closeNewsModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-xl transition-all">Cancelar</button>
+                    <button type="submit" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-brand-500/20">Publicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: EXCEL IMPORT ==================== -->
+    <div id="modal-import" class="modal">
+        <div class="modal-content glass-card max-w-md w-full p-8 space-y-6 relative overflow-hidden">
+            <button onclick="closeImportModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center space-y-2">
+                <div class="inline-flex p-3 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-500 rounded-2xl mb-2">
+                    <i class="fa-solid fa-file-excel text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-extrabold text-slate-800 dark:text-slate-100">Importar Avances de Ejecución</h3>
+                <p class="text-xs text-slate-400">Carga un Excel con los valores ejecutados por mes para actualizar el tablero.</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Dropzone -->
+                <div id="excel-dropzone" class="border-2 border-dashed border-slate-200 dark:border-darkbg-border rounded-2xl p-8 text-center hover:border-brand-500 dark:hover:border-brand-500 hover:bg-brand-50/5 dark:hover:bg-brand-950/5 transition-all cursor-pointer relative">
+                    <input type="file" id="excel-file-input" accept=".xlsx, .xls" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="handleExcelFile(event)">
+                    <div class="space-y-3">
+                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400" id="dropzone-icon"></i>
+                        <p class="text-sm font-medium" id="dropzone-text">Arrastra tu archivo aquí o haz clic para buscar</p>
+                        <p class="text-[10px] text-slate-400">Formatos soportados: .xlsx, .xls</p>
+                    </div>
+                </div>
+
+                <!-- Success State -->
+                <div id="import-success" class="hidden p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-400 text-xs font-semibold flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-check text-lg flex-shrink-0"></i>
+                    <span id="import-success-text"></span>
+                </div>
+
+                <button onclick="closeImportModal()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-xl transition-all">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: ESTRATEGIA (ADD/EDIT) ==================== -->
+    <div id="modal-estrategia" class="modal">
+        <div class="modal-content glass-card max-w-lg w-full p-8 space-y-6 relative overflow-hidden">
+            <button onclick="closeEstrategiaModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-xl font-extrabold text-slate-800 dark:text-slate-100" id="strategy-modal-title">Nueva Estrategia</h3>
+
+            <form onsubmit="saveEstrategia(event)" class="space-y-4">
+                <input type="hidden" id="strategy-id">
+
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Nombre de la Estrategia</label>
+                    <input type="text" id="strategy-name" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Línea / Etiqueta</label>
+                        <input type="text" id="strategy-tag" placeholder="Ej: Innovación, Formación..." required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Estado</label>
+                        <select id="strategy-status" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                            <option value="En Ejecución">En Ejecución</option>
+                            <option value="En Planeación">En Planeación</option>
+                            <option value="Finalizado">Finalizado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Elegir Icono</label>
+                        <input type="hidden" id="strategy-icon" value="fa-rocket">
+                        <div class="grid grid-cols-5 gap-1.5 p-1.5 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-darkbg-border" id="icon-selector-grid">
+                            <button type="button" onclick="selectStrategyIcon('fa-brain')" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 flex items-center justify-center text-xs text-slate-600 dark:text-slate-350 transition-all active:scale-95" data-icon="fa-brain" title="Inteligencia / IA">
+                                <i class="fa-solid fa-brain"></i>
+                            </button>
+                            <button type="button" onclick="selectStrategyIcon('fa-robot')" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 flex items-center justify-center text-xs text-slate-600 dark:text-slate-350 transition-all active:scale-95" data-icon="fa-robot" title="Robótica / STEM">
+                                <i class="fa-solid fa-robot"></i>
+                            </button>
+                            <button type="button" onclick="selectStrategyIcon('fa-rocket')" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 flex items-center justify-center text-xs text-slate-600 dark:text-slate-350 transition-all active:scale-95" data-icon="fa-rocket" title="Lanzamiento / Futuro">
+                                <i class="fa-solid fa-rocket"></i>
+                            </button>
+                            <button type="button" onclick="selectStrategyIcon('fa-house-laptop')" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 flex items-center justify-center text-xs text-slate-600 dark:text-slate-350 transition-all active:scale-95" data-icon="fa-house-laptop" title="Hogar / TIC Familia">
+                                <i class="fa-solid fa-house-laptop"></i>
+                            </button>
+                            <button type="button" onclick="selectStrategyIcon('fa-graduation-cap')" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 flex items-center justify-center text-xs text-slate-600 dark:text-slate-350 transition-all active:scale-95" data-icon="fa-graduation-cap" title="Capacitación / Formación">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </button>
+                            <button type="button" onclick="selectStrategyIcon('fa-lightbulb')" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 flex items-center justify-center text-xs text-slate-600 dark:text-slate-350 transition-all active:scale-95" data-icon="fa-lightbulb" title="Innovación / Ideas">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </button>
+                            <button type="button" onclick="selectStrategyIcon('fa-compass')" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 flex items-center justify-center text-xs text-slate-600 dark:text-slate-350 transition-all active:scale-95" data-icon="fa-compass" title="Estrategia / Guía">
+                                <i class="fa-solid fa-compass"></i>
+                            </button>
+                            <button type="button" onclick="selectStrategyIcon('fa-chart-line')" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 flex items-center justify-center text-xs text-slate-600 dark:text-slate-350 transition-all active:scale-95" data-icon="fa-chart-line" title="Avance / Métricas">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </button>
+                            <button type="button" onclick="selectStrategyIcon('fa-users')" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 flex items-center justify-center text-xs text-slate-600 dark:text-slate-350 transition-all active:scale-95" data-icon="fa-users" title="Colaboración / Comunidad">
+                                <i class="fa-solid fa-users"></i>
+                            </button>
+                            <button type="button" onclick="selectStrategyIcon('fa-laptop-code')" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 flex items-center justify-center text-xs text-slate-600 dark:text-slate-350 transition-all active:scale-95" data-icon="fa-laptop-code" title="Programación / Código">
+                                <i class="fa-solid fa-laptop-code"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Color del Gradiente</label>
+                        <select id="strategy-color" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none">
+                            <option value="from-purple-500 to-indigo-600">Púrpura / Índigo</option>
+                            <option value="from-rose-500 to-orange-500">Rosa / Naranja</option>
+                            <option value="from-blue-500 to-cyan-500">Azul / Celeste</option>
+                            <option value="from-emerald-500 to-teal-500">Esmeralda / Teal</option>
+                            <option value="from-amber-500 to-yellow-500">Ámbar / Amarillo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Descripción</label>
+                    <textarea id="strategy-desc" rows="2" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none"></textarea>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Objetivos / Hitos (uno por línea)</label>
+                    <textarea id="strategy-objectives" rows="3" placeholder="Ej: Capacitar a 1500 docentes&#10;Desarrollar guías de IA" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkbg-border rounded-xl text-sm focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" onclick="closeEstrategiaModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-xl transition-all">Cancelar</button>
+                    <button type="submit" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-brand-500/20">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
