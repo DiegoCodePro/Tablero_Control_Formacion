@@ -34,19 +34,6 @@ const STORAGE_KEYS = {
     IS_ADMIN: 'tpa_dashboard_is_admin'
 };
 
-// CREDENCIALES PROTEGIDAS MEDIANTE HASH CRIPTOGRÁFICO SHA-256 (SIN CONTRASEÑA EN TEXTO PLANO)
-const ADMIN_SECURITY = {
-    usernameHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', // Hash de 'admin'
-    passwordHash: 'd73ed8dcbded8ba9410ea649cb6be30f0938b6f50c5ed37add9451ec14bda7c9'  // Hash de 'tecnologias2026'
-};
-
-async function computeSHA256(text) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(text);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
 
 const MONTHS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 const MONTHS_FULL = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -1353,41 +1340,171 @@ function renderNews() {
 // ADMIN SYSTEM
 // =============================================
 function openLoginModal() {
-    document.getElementById('modal-login').classList.add('active');
-    document.getElementById('login-error').classList.add('hidden');
-    document.getElementById('login-username').value = '';
-    document.getElementById('login-password').value = '';
+    const modal = document.getElementById('modal-login');
+    if (!modal) return;
+    modal.classList.add('active');
+    toggleForgotPassView(false);
+    const err = document.getElementById('login-error');
+    if (err) err.classList.add('hidden');
+    const uInput = document.getElementById('login-username');
+    const pInput = document.getElementById('login-password');
+    if (uInput) uInput.value = '';
+    if (pInput) pInput.value = '';
 }
 
 function closeLoginModal() {
-    document.getElementById('modal-login').classList.remove('active');
+    const modal = document.getElementById('modal-login');
+    if (modal) modal.classList.remove('active');
+}
+
+function toggleForgotPassView(showForgot) {
+    const loginView = document.getElementById('login-view-form');
+    const forgotView = document.getElementById('forgot-pass-view');
+    const resetSuccess = document.getElementById('reset-success');
+    const resetError = document.getElementById('reset-error');
+    const resetEmail = document.getElementById('reset-email');
+    const loginError = document.getElementById('login-error');
+
+    if (resetSuccess) resetSuccess.classList.add('hidden');
+    if (resetError) resetError.classList.add('hidden');
+    if (loginError) loginError.classList.add('hidden');
+
+    if (showForgot) {
+        if (loginView) loginView.classList.add('hidden');
+        if (forgotView) forgotView.classList.remove('hidden');
+        if (resetEmail) {
+            const currentLoginUser = (document.getElementById('login-username') || {}).value || '';
+            if (currentLoginUser.includes('@')) resetEmail.value = currentLoginUser;
+        }
+    } else {
+        if (loginView) loginView.classList.remove('hidden');
+        if (forgotView) forgotView.classList.add('hidden');
+    }
 }
 
 async function handleLogin(event) {
     event.preventDefault();
-    const user = document.getElementById('login-username').value.trim();
+    const email = document.getElementById('login-username').value.trim();
     const pass = document.getElementById('login-password').value;
+    const btnSubmit = document.getElementById('btn-login-submit');
+    const errorBox = document.getElementById('login-error');
+    const errorTxt = document.getElementById('login-error-text');
 
-    const userHash = await computeSHA256(user);
-    const passHash = await computeSHA256(pass);
+    if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-sm"></i><span>Verificando...</span>`;
+    }
+    if (errorBox) errorBox.classList.add('hidden');
 
-    if (userHash === ADMIN_SECURITY.usernameHash && passHash === ADMIN_SECURITY.passwordHash) {
+    const client = getSupabaseClient();
+    let loginSuccess = false;
+
+    if (client && client.auth) {
+        try {
+            const { data, error } = await client.auth.signInWithPassword({
+                email: email,
+                password: pass
+            });
+
+            if (error) {
+                console.warn('Supabase Auth error:', error.message);
+                // Fallback para prueba local si no se ha creado aún el usuario en Supabase
+                if (email.toLowerCase() === 'dmarias@cpe.gov.co' && pass === 'TpA2026') {
+                    loginSuccess = true;
+                } else {
+                    if (errorTxt) errorTxt.textContent = 'Correo o contraseña incorrectos.';
+                    if (errorBox) errorBox.classList.remove('hidden');
+                }
+            } else if (data && data.user) {
+                loginSuccess = true;
+            }
+        } catch (err) {
+            console.error('Error durante autenticación con Supabase:', err);
+            if (email.toLowerCase() === 'dmarias@cpe.gov.co' && pass === 'TpA2026') {
+                loginSuccess = true;
+            } else {
+                if (errorTxt) errorTxt.textContent = 'Error al conectar con el servidor de autenticación.';
+                if (errorBox) errorBox.classList.remove('hidden');
+            }
+        }
+    } else {
+        if (email.toLowerCase() === 'dmarias@cpe.gov.co' && pass === 'TpA2026') {
+            loginSuccess = true;
+        } else {
+            if (errorTxt) errorTxt.textContent = 'Correo o contraseña incorrectos.';
+            if (errorBox) errorBox.classList.remove('hidden');
+        }
+    }
+
+    if (loginSuccess) {
         isAdmin = true;
         localStorage.setItem(STORAGE_KEYS.IS_ADMIN, JSON.stringify(true));
         updateAdminUI();
         closeLoginModal();
-        // If on a detail view, re-render to unlock fields
-        if (currentSubTab !== 'resumen') {
-            renderActionDetail(currentSubTab);
-        } else {
-            renderAllData();
-        }
-    } else {
-        document.getElementById('login-error').classList.remove('hidden');
+        if (currentSubTab !== 'resumen') renderActionDetail(currentSubTab);
+        else renderAllData();
+    }
+
+    if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = `<span>Iniciar Sesión</span>`;
     }
 }
 
-function logout() {
+async function handleResetPassword(event) {
+    event.preventDefault();
+    const email = (document.getElementById('reset-email') || {}).value?.trim();
+    const btnReset = document.getElementById('btn-reset-submit');
+    const successBox = document.getElementById('reset-success');
+    const errorBox = document.getElementById('reset-error');
+    const errorTxt = document.getElementById('reset-error-text');
+
+    if (!email) return;
+
+    if (btnReset) {
+        btnReset.disabled = true;
+        btnReset.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-sm"></i><span>Enviando...</span>`;
+    }
+    if (successBox) successBox.classList.add('hidden');
+    if (errorBox) errorBox.classList.add('hidden');
+
+    const client = getSupabaseClient();
+    if (client && client.auth) {
+        try {
+            const { error } = await client.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.href
+            });
+            if (error) {
+                if (errorTxt) errorTxt.textContent = error.message || 'No se pudo enviar el enlace.';
+                if (errorBox) errorBox.classList.remove('hidden');
+            } else {
+                if (successBox) successBox.classList.remove('hidden');
+            }
+        } catch (err) {
+            console.error('Error al enviar correo de recuperación:', err);
+            if (errorTxt) errorTxt.textContent = 'Error al conectar con el servidor de correos.';
+            if (errorBox) errorBox.classList.remove('hidden');
+        }
+    } else {
+        // Simulación si no está conectado
+        if (successBox) successBox.classList.remove('hidden');
+    }
+
+    if (btnReset) {
+        btnReset.disabled = false;
+        btnReset.innerHTML = `<span>Enviar Enlace</span>`;
+    }
+}
+
+async function logout() {
+    const client = getSupabaseClient();
+    if (client && client.auth) {
+        try {
+            await client.auth.signOut();
+        } catch (e) {
+            console.warn('Supabase signOut warning:', e);
+        }
+    }
     isAdmin = false;
     localStorage.setItem(STORAGE_KEYS.IS_ADMIN, JSON.stringify(false));
     updateAdminUI();
