@@ -1,8 +1,9 @@
 // ==================== ENGINE & BUSINESS LOGIC: TECNOLOGÍAS PARA APRENDER ====================
 
-// --- DATA SYSTEM (LOCAL STORAGE PERSISTENCE) ---
+//// --- DATA SYSTEM (LOCAL STORAGE PERSISTENCE) ---
 const STORAGE_KEYS = {
     ACTIONS: 'tpa_dashboard_actions_v2',
+    INDICATORS: 'tpa_dashboard_indicators_v2',
     EVENTS: 'tpa_dashboard_events',
     NEWS: 'tpa_dashboard_news',
     STRATEGIES: 'tpa_dashboard_strategies',
@@ -55,55 +56,55 @@ const DEFAULT_ACTIONS = [
         code: 'FE_03',
         name: 'Docentes formados y acompañados',
         line: 'Formación',
-        description: 'Desarrollar la oferta formativa y acompañamiento a docentes por parte de CPE, fortaleciendo las competencias requeridas en el uso práctico de las TIC con enfoque territorial, escalonado y pertinente con las diferentes áreas de conocimiento.',
+        description: 'Desarrollar la oferta formativa y acompañamiento a docentes por parte de CPE.',
         support: 'Base de datos de docentes formados y acompañados',
-        goal: 3000,
+        goal: 3600,
         unit: 'Docentes',
-        plannedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:1000, Ago:500, Sep:0, Oct:500, Nov:0, Dic:1000 },
+        plannedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:600, Sep:1280, Oct:0, Nov:1720, Dic:0 },
         executedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:0, Oct:0, Nov:0, Dic:0 },
-        responsibleRole: 'Profesional de Formación 5.2 / Contratista / Contratista',
+        responsibleRole: 'Profesional  de Formación 5.2 / Contratista / Contratista',
         responsibleName: 'Diana Maria Montero\nJuan Carlos Ruíz\nJuan Camilo Aponte',
         status: 'Planeado'
     },
     {
         id: 'act-4',
         code: 'FE_04',
-        name: 'Alcanzar 800 nuevos CI',
+        name: 'Alcanzar 800 nuevos Centros de Interés - Línea 1',
         line: 'Formación',
-        description: 'La incorporación de esta acción responde a la necesidad de integrar la entrega de dotación tecnológica con procesos de formación y acompañamiento pedagógico, evitando que los recursos se queden en un enfoque meramente dotacional. Se garantiza apoyo técnico y pedagógico que promueva la sostenibilidad y la apropiación efectiva de la tecnología.',
+        description: 'La incorporación de esta acción responde a la necesidad de integrar la entrega de dotación tecnológica con procesos de formación y acompañamiento pedagógico, evitando que los recursos se queden en un enfoque meramente dotacional. De este modo, se garantiza que los establecimientos educativos priorizados cuenten con apoyo técnico y pedagógico que promueva la sostenibilidad y la apropiación efectiva de la tecnología.',
         support: 'Base de datos CI creados',
-        goal: 800,
-        unit: 'Centros de Interés',
-        plannedMonths: { Ene:0, Feb:688, Mar:12, Abr:0, May:0, Jun:0, Jul:0, Ago:100, Sep:0, Oct:0, Nov:0, Dic:0 },
+        goal: 875,
+        unit: 'Centros de interés',
+        plannedMonths: { Ene:0, Feb:688, Mar:12, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:175, Oct:0, Nov:0, Dic:0 },
         executedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:0, Oct:0, Nov:0, Dic:0 },
-        responsibleRole: 'Profesional de Formación 8.2 / Profesional de Formación 5.2 / Contratista',
+        responsibleRole: 'Profesional de Formación 8.2 / Profesional  de Formación 5.2 / Contratista',
         responsibleName: 'Juliana Lesmes Alvarado\nDiana Maria Montero\nJuan Camilo Aponte',
         status: 'Planeado'
     },
     {
         id: 'act-5',
         code: 'FE_05',
-        name: 'Alcanzar 700 CI fortalecidos',
+        name: 'Alcanzar 700 Centros de Interés fortalecidos - Linea 2',
         line: 'Formación',
-        description: 'Garantizar que los establecimientos educativos priorizados cuenten con apoyo técnico y pedagógico que promueva la sostenibilidad y la apropiación efectiva de la tecnología, integrando la entrega de dotación tecnológica con procesos de formación y acompañamiento pedagógico.',
+        description: 'La incorporación de esta acción responde a la necesidad de integrar la entrega de dotación tecnológica con procesos de formación y acompañamiento pedagógico, evitando que los recursos se queden en un enfoque meramente dotacional. De este modo, se garantiza que los establecimientos educativos priorizados cuenten con apoyo técnico y pedagógico que promueva la sostenibilidad y la apropiación efectiva de la tecnología.',
         support: 'Base de datos CI acompañados',
-        goal: 700,
-        unit: 'Centros de Interés',
-        plannedMonths: { Ene:0, Feb:588, Mar:12, Abr:0, May:0, Jun:0, Jul:0, Ago:100, Sep:0, Oct:0, Nov:0, Dic:0 },
+        goal: 775,
+        unit: 'Centros de interés',
+        plannedMonths: { Ene:0, Feb:588, Mar:12, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:175, Oct:0, Nov:0, Dic:0 },
         executedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:0, Oct:0, Nov:0, Dic:0 },
-        responsibleRole: 'Profesional de Formación 8.2 / Profesional de Formación 5.2 / Contratista / Contratista',
+        responsibleRole: 'Profesional de Formación 8.2 / Profesional  de Formación 5.2 / Contratista / Contratista',
         responsibleName: 'Juliana Lesmes Alvarado\nDiana Maria Montero\nJuan Camilo Aponte\nJose Luis Rodríguez',
         status: 'Planeado'
     },
     {
         id: 'act-6',
         code: 'FE_06',
-        name: 'Actualización y mejora de contenidos educativos digitales',
+        name: 'Actualización y mejora de los contenidos educativos digitales',
         line: 'Formación',
         description: 'Implementar las acciones orientadas a la actualización y mejora de los contenidos educativos digitales, de igual forma realizar dos mesas de seguimiento a la implementación de la estrategia de fomento al uso y apropiación de contenido educativo disponible, en docentes, estudiantes y padres de familia o cuidadores.',
         support: 'Reporte de ejecución y/o asistencia',
         goal: 2,
-        unit: 'Reportes de ejecución/asistencia/grabación',
+        unit: 'Reporte de ejecución/asistencia/grabacion',
         plannedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:1, Ago:0, Sep:0, Oct:0, Nov:0, Dic:1 },
         executedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:0, Oct:0, Nov:0, Dic:0 },
         responsibleRole: 'Profesional de Formación 5.1 / Contratista',
@@ -113,28 +114,28 @@ const DEFAULT_ACTIONS = [
     {
         id: 'act-7',
         code: 'FE_07',
-        name: 'Actividades para la familia con padres y cuidadores',
+        name: 'Actividades para la familia',
         line: 'Formación',
-        description: 'Ejecutar las actividades para la familia con padres y cuidadores a través de la estrategia Escuela TIC familia, fomentar el uso de las tecnologías digitales en padres de familia orientado a procesos de apropiación básica y mitigar los riesgos de las tecnologías digitales.',
+        description: 'Ejecutar las actividades para la familia con padres y cuidadores 2026.',
         support: 'Base de datos de padres o cuidadores',
         goal: 1300,
         unit: 'Padres o cuidadores capacitados',
-        plannedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:300, Sep:1000, Oct:0, Nov:0, Dic:0 },
+        plannedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:0, Oct:1300, Nov:0, Dic:0 },
         executedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:0, Oct:0, Nov:0, Dic:0 },
-        responsibleRole: 'Profesional de Formación 5.2 / Profesional de Formación 4 / Contratista / Contratista',
+        responsibleRole: 'Profesional  de Formación 5.2 / Profesional de Formación 4 / Contratista / Contratista',
         responsibleName: 'Diana Maria Montero\nMateo Castro\nJose Luis Rodríguez\nJuan Camilo Aponte',
         status: 'Planeado'
     },
     {
         id: 'act-8',
         code: 'FE_08',
-        name: 'Estudiantes formados y acompañados',
+        name: 'Estudiantes participantes en procesos de formación',
         line: 'Formación',
-        description: 'Ejecutar las actividades y experiencias de aprendizaje con uso de elementos electrónicos y tecnológicos recuperados a través del kit Maker con estudiantes de las sedes educativas focalizadas, y a su vez desarrollar sesiones de trabajo y entrenamiento bajo el enfoque STEM.',
-        support: 'Base de datos estudiantes formados y/o acompañados',
-        goal: 10000,
+        description: 'Ejecutar las actividades y experiencias de aprendizaje con uso de elementos electrónicos y tecnológicos recuperados a través del kit Maker con estudiantes de las sedes educativas focalizadas, y a su vez desarrollar sesiones de trabajo, de entrenamiento a estudiantes que permitan desarrollar competencias bajo el enfoque STEM.',
+        support: 'Base de datos  estudiantes formados y/o acompañados',
+        goal: 15000,
         unit: 'Estudiantes',
-        plannedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:10000, Oct:0, Nov:0, Dic:0 },
+        plannedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:5000, Sep:0, Oct:5000, Nov:5000, Dic:0 },
         executedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:0, Oct:0, Nov:0, Dic:0 },
         responsibleRole: 'Profesional de Formación 5.2 / Profesional de Formación 4 / Contratista / Profesional de Formación 8.2 / Contratista',
         responsibleName: 'Diana Maria Montero\nMateo Castro\nJose Luis Rodríguez\nJuliana Lesmes Alvarado\nJuan Camilo Aponte',
@@ -143,16 +144,53 @@ const DEFAULT_ACTIONS = [
     {
         id: 'act-9',
         code: 'FE_09',
-        name: 'Eventos y espacios de formación',
+        name: 'Encuentros, eventos y espacios de participación y/o formación',
         line: 'Formación',
-        description: 'La integración de todos los encuentros, eventos y espacios de participación y/o formación en un solo reporte dentro de la estrategia de formación integral de CPE permite optimizar la planeación, ejecución y seguimiento de estas actividades, facilitando la articulación de los objetivos pedagógicos y técnicos a nivel nacional.',
+        description: 'La integración de todos los encuentros, eventos y espacios de participación y/o formación en un solo reporte dentro de la estrategia de formación integral de Computadores para Educar (CPE) permite optimizar la planeación, ejecución y  seguimiento de estas actividades. Esta consolidación evita la dispersión de información en reportes aislados, facilita la articulación de los objetivos pedagógicos y técnicos de la Subdirección de Formación y fortalece la coherencia de la estrategia a nivel nacional.',
         support: 'Registro de asistencia participantes',
-        goal: 25,
-        unit: 'Eventos',
-        plannedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:10, Jun:0, Jul:5, Ago:0, Sep:5, Oct:0, Nov:5, Dic:0 },
+        goal: 40,
+        unit: 'Evento',
+        plannedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:7, Jun:3, Jul:0, Ago:8, Sep:0, Oct:12, Nov:0, Dic:10 },
         executedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:0, Oct:0, Nov:0, Dic:0 },
-        responsibleRole: 'Profesional de Formación 5.1 / Técnico de Formación 5 / Profesional de Formación 3 / Profesional de Innovación',
+        responsibleRole: 'Profesional de Formación 5.1 / Tecnico de Formación 5 / Profesional de Formación 3 / Profesional de Innovación',
         responsibleName: 'Mery Johana Gomez\nDiana Marcela Arias Garcia\nLuis Ramos\nDiego Poveda',
+        status: 'Planeado'
+    },
+    {
+        id: 'act-10',
+        code: 'FE_10',
+        name: 'Alcanzar 400 nuevas Iniciativas Escolares que integran la Tecnologia - Línea 3',
+        line: 'Formación',
+        description: 'La incorporación de esta acción responde a la necesidad de integrar la entrega de dotación tecnológica con procesos de formación y acompañamiento pedagógico, evitando que los recursos se queden en un enfoque meramente dotacional. De este modo, se garantiza que los establecimientos educativos priorizados cuenten con apoyo técnico y pedagógico que promueva la sostenibilidad y la apropiación efectiva de la tecnología.',
+        support: 'Base de datos Iniciativas Escolares',
+        goal: 400,
+        unit: 'Iniciativas Escolares',
+        plannedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:400, Oct:0, Nov:0, Dic:0 },
+        executedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:0, Oct:0, Nov:0, Dic:0 },
+        responsibleRole: 'Profesional de Formación 8.2 / Profesional  de Formación 5.2 / Contratista',
+        responsibleName: 'Juliana Lesmes Alvarado\nDiana Maria Montero\nJuan Camilo Aponte',
+        status: 'Planeado'
+    }
+];
+
+const DEFAULT_INDICATORS = [
+    {
+        id: 'ind-1',
+        code: 'FE_1',
+        name: 'Porcentaje de satisfacción de los participantes en las estrategias de formación e innovación',
+        proceso: 'Formación Educativa',
+        type: 'Resultado',
+        description: 'Medir el nivel de satisfacción de los participantes frente a las actividades, metodologías y contenidos desarrollados en las estrategias de formación e innovación implementadas por la subdirección.',
+        frequency: 'Anual',
+        formula: '(Número de participantes satisfechos/ total de participantes) *100',
+        unit: 'Porcentaje',
+        support: 'Reporte del indicador',
+        control: 'Mínimo',
+        goal: 80,
+        plannedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:0, Oct:0, Nov:0, Dic:80 },
+        executedMonths: { Ene:0, Feb:0, Mar:0, Abr:0, May:0, Jun:0, Jul:0, Ago:0, Sep:0, Oct:0, Nov:0, Dic:0 },
+        responsibleRole: 'Profesional de Formación 8.2 / Profesional  de Formación 5.2 / Profesional de  Innovación',
+        responsibleName: 'Juliana Lesmes Alvarado\nDiana Maria Montero\nDiego Poveda',
         status: 'Planeado'
     }
 ];
@@ -261,11 +299,13 @@ const DEFAULT_STRATEGIES = [
 
 // --- APP STATE ---
 let actions = [];
+let indicators = [];
 let events = JSON.parse(localStorage.getItem(STORAGE_KEYS.EVENTS)) || DEFAULT_EVENTS;
 let news = JSON.parse(localStorage.getItem(STORAGE_KEYS.NEWS)) || DEFAULT_NEWS;
 let strategies = JSON.parse(localStorage.getItem(STORAGE_KEYS.STRATEGIES)) || DEFAULT_STRATEGIES;
 let isAdmin = JSON.parse(localStorage.getItem(STORAGE_KEYS.IS_ADMIN)) || false;
 let currentSubTab = 'resumen'; // 'resumen' or 'act-X'
+let currentIndicatorTab = 'resumen'; // 'resumen' or 'ind-X'
 
 // --- HELPER: Compute progress for a single action ---
 function computeActionProgress(act) {
@@ -278,6 +318,34 @@ function computeActionStatus(act) {
     const totalExecuted = MONTHS.reduce((s, m) => s + (Number(act.executedMonths[m]) || 0), 0);
     if (totalExecuted === 0) return 'Planeado';
     if (totalExecuted >= act.goal) return 'Completado';
+    return 'En Curso';
+}
+
+// --- HELPER: Compute progress for a single indicator ---
+function computeIndicatorProgress(ind) {
+    let targetMonths = 0;
+    let totalPct = 0;
+    MONTHS.forEach(m => {
+        const target = Number(ind.plannedMonths[m]) || 0;
+        if (target > 0) {
+            targetMonths++;
+            const exec = Number(ind.executedMonths[m]) || 0;
+            // Since it's minimum, if exec >= target, we completed 100% for that month
+            if (ind.control === 'Mínimo') {
+                totalPct += exec >= target ? 100 : Math.round((exec / target) * 100);
+            } else {
+                totalPct += Math.round((exec / target) * 100);
+            }
+        }
+    });
+    return targetMonths > 0 ? Math.min(100, Math.round(totalPct / targetMonths)) : 0;
+}
+
+function computeIndicatorStatus(ind) {
+    const totalExecuted = MONTHS.reduce((s, m) => s + (Number(ind.executedMonths[m]) || 0), 0);
+    if (totalExecuted === 0) return 'Planeado';
+    const progress = computeIndicatorProgress(ind);
+    if (progress >= 100) return 'Completado';
     return 'En Curso';
 }
 
@@ -303,13 +371,35 @@ function saveActions() {
     localStorage.setItem(STORAGE_KEYS.ACTIONS, JSON.stringify(toSave));
 }
 
+// --- LOAD INDICATORS: Merge persisted executed data over defaults ---
+function loadIndicators() {
+    const persisted = JSON.parse(localStorage.getItem(STORAGE_KEYS.INDICATORS));
+    if (persisted) {
+        return DEFAULT_INDICATORS.map(def => {
+            const saved = persisted.find(p => p.id === def.id);
+            if (saved && saved.executedMonths) {
+                return { ...def, executedMonths: saved.executedMonths };
+            }
+            return { ...def };
+        });
+    }
+    return DEFAULT_INDICATORS.map(d => ({ ...d }));
+}
+
+function saveIndicators() {
+    const toSave = indicators.map(ind => ({ id: ind.id, executedMonths: ind.executedMonths }));
+    localStorage.setItem(STORAGE_KEYS.INDICATORS, JSON.stringify(toSave));
+}
+
 // --- INITIALIZER ---
 document.addEventListener('DOMContentLoaded', () => {
     actions = loadActions();
+    indicators = loadIndicators();
 
     if (!localStorage.getItem(STORAGE_KEYS.EVENTS)) localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(events));
     if (!localStorage.getItem(STORAGE_KEYS.NEWS)) localStorage.setItem(STORAGE_KEYS.NEWS, JSON.stringify(news));
     if (!localStorage.getItem(STORAGE_KEYS.STRATEGIES)) localStorage.setItem(STORAGE_KEYS.STRATEGIES, JSON.stringify(strategies));
+    if (!localStorage.getItem(STORAGE_KEYS.INDICATORS)) saveIndicators();
 
     // Apply theme
     if (localStorage.getItem('theme') === 'light') {
@@ -345,6 +435,7 @@ function renderAllData() {
     renderEvents();
     renderNews();
     renderStrategies();
+    renderIndicatorsTable();
 }
 
 // =============================================
@@ -446,14 +537,14 @@ function renderActionDetail(actionId) {
     const progressColor = progress === 100 ? '#10b981' : progress > 50 ? '#6366f1' : '#f59e0b';
 
     // Team members
-    const names = act.responsibleName.split('\n').filter(n => n.trim());
-    const roles = act.responsibleRole.split('/').map(r => r.trim());
+    const names = (act.responsibleName || '').split(/\n|\//).map(n => n.trim()).filter(n => n.length > 0);
+    const roles = (act.responsibleRole || '').split(/\n|\//).map(r => r.trim()).filter(r => r.length > 0);
     const avatarColors = ['from-brand-500 to-indigo-600', 'from-emerald-500 to-teal-600', 'from-amber-500 to-orange-600', 'from-pink-500 to-rose-600', 'from-cyan-500 to-blue-600'];
 
     let teamHTML = names.map((name, i) => {
         const initials = name.trim().split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
         const colorGrad = avatarColors[i % avatarColors.length];
-        const role = roles[i] || roles[roles.length - 1] || '';
+        const role = roles[i] || roles[roles.length - 1] || 'Responsable';
         return `
             <div class="flex items-center space-x-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50">
                 <div class="w-9 h-9 rounded-xl bg-gradient-to-br ${colorGrad} text-white flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-md">${initials}</div>
@@ -464,6 +555,9 @@ function renderActionDetail(actionId) {
             </div>
         `;
     }).join('');
+    if (!teamHTML) {
+        teamHTML = `<p class="text-xs text-slate-400 col-span-full">No se registraron responsables para esta acción.</p>`;
+    }
 
     // Monthly grid
     const monthlyGridHTML = buildMonthlyGrid(act, isAdmin);
@@ -781,31 +875,76 @@ function renderKPIs() {
     const compEl = document.getElementById('kpi-acciones-completas');
     if (compEl) compEl.textContent = `${completedActions} completadas`;
 
-    // KPI Meta Eventos: goal and executions of act-9
-    const eventosAct = actions.find(a => a.id === 'act-9');
+    // KPI Meta Eventos: FE_09
+    const eventosAct = actions.find(a => a.code === 'FE_09');
     if (eventosAct) {
-        const kpiEventosMeta = document.getElementById('kpi-eventos-totales');
-        if (kpiEventosMeta) animateNumber('kpi-eventos-totales', eventosAct.goal);
-        
+        animateNumber('kpi-eventos-totales', eventosAct.goal);
         const totalExecutedEvents = MONTHS.reduce((s, m) => s + (Number(eventosAct.executedMonths[m]) || 0), 0);
         const kpiEventosEjecutados = document.getElementById('kpi-eventos-ejecutados');
         if (kpiEventosEjecutados) kpiEventosEjecutados.textContent = `${totalExecutedEvents} ejecutados`;
     }
 
-    // KPI Meta Docentes: goal of act-3
-    const docentesAct = actions.find(a => a.id === 'act-3');
-    const kpiDocentes = document.getElementById('kpi-docentes');
-    if (kpiDocentes && docentesAct) {
-        kpiDocentes.textContent = docentesAct.goal.toLocaleString('es-CO');
+    // KPI CI Nuevos: FE_04
+    const ciAct4 = actions.find(a => a.code === 'FE_04');
+    if (ciAct4) {
+        const kpiCI4 = document.getElementById('kpi-ci-nuevos');
+        if (kpiCI4) kpiCI4.textContent = ciAct4.goal.toLocaleString('es-CO');
+        const totalExecutedCI4 = MONTHS.reduce((s, m) => s + (Number(ciAct4.executedMonths[m]) || 0), 0);
+        const kpiCI4Ejecutados = document.getElementById('kpi-ci-nuevos-ejecutados');
+        if (kpiCI4Ejecutados) kpiCI4Ejecutados.textContent = `${totalExecutedCI4.toLocaleString('es-CO')} creados`;
     }
 
-    // KPI Centros de Interés: suma de metas act-4 (800 nuevos) + act-5 (700 fortalecidos)
-    const ciAct4 = actions.find(a => a.id === 'act-4');
-    const ciAct5 = actions.find(a => a.id === 'act-5');
-    const totalCI = (ciAct4 ? ciAct4.goal : 0) + (ciAct5 ? ciAct5.goal : 0);
-    const kpiCI = document.getElementById('kpi-ci');
-    if (kpiCI) kpiCI.textContent = totalCI.toLocaleString('es-CO');
+    // KPI CI Fortalecidos: FE_05
+    const ciAct5 = actions.find(a => a.code === 'FE_05');
+    if (ciAct5) {
+        const kpiCI5 = document.getElementById('kpi-ci-fortalecidos');
+        if (kpiCI5) kpiCI5.textContent = ciAct5.goal.toLocaleString('es-CO');
+        const totalExecutedCI5 = MONTHS.reduce((s, m) => s + (Number(ciAct5.executedMonths[m]) || 0), 0);
+        const kpiCI5Ejecutados = document.getElementById('kpi-ci-fortalecidos-ejecutados');
+        if (kpiCI5Ejecutados) kpiCI5Ejecutados.textContent = `${totalExecutedCI5.toLocaleString('es-CO')} acompañados`;
+    }
+
+    // KPI Meta Docentes: FE_03
+    const docentesAct = actions.find(a => a.code === 'FE_03');
+    if (docentesAct) {
+        const kpiDocentes = document.getElementById('kpi-docentes');
+        if (kpiDocentes) kpiDocentes.textContent = docentesAct.goal.toLocaleString('es-CO');
+        const totalExecutedDocentes = MONTHS.reduce((s, m) => s + (Number(docentesAct.executedMonths[m]) || 0), 0);
+        const kpiDocentesEjecutados = document.getElementById('kpi-docentes-ejecutados');
+        if (kpiDocentesEjecutados) kpiDocentesEjecutados.textContent = `${totalExecutedDocentes.toLocaleString('es-CO')} formados`;
+    }
+
+    // KPI Meta Estudiantes: FE_08
+    const estudiantesAct = actions.find(a => a.code === 'FE_08');
+    if (estudiantesAct) {
+        const kpiEstudiantes = document.getElementById('kpi-estudiantes');
+        if (kpiEstudiantes) kpiEstudiantes.textContent = estudiantesAct.goal.toLocaleString('es-CO');
+        const totalExecutedEstudiantes = MONTHS.reduce((s, m) => s + (Number(estudiantesAct.executedMonths[m]) || 0), 0);
+        const kpiEstudiantesEjecutados = document.getElementById('kpi-estudiantes-ejecutados');
+        if (kpiEstudiantesEjecutados) kpiEstudiantesEjecutados.textContent = `${totalExecutedEstudiantes.toLocaleString('es-CO')} formados`;
+    }
+
+    // KPI Meta Familia: FE_07
+    const familiaAct = actions.find(a => a.code === 'FE_07');
+    if (familiaAct) {
+        const kpiFamilia = document.getElementById('kpi-familia');
+        if (kpiFamilia) kpiFamilia.textContent = familiaAct.goal.toLocaleString('es-CO');
+        const totalExecutedFamilia = MONTHS.reduce((s, m) => s + (Number(familiaAct.executedMonths[m]) || 0), 0);
+        const kpiFamiliaEjecutados = document.getElementById('kpi-familia-ejecutados');
+        if (kpiFamiliaEjecutados) kpiFamiliaEjecutados.textContent = `${totalExecutedFamilia.toLocaleString('es-CO')} capacitados`;
+    }
+
+    // KPI Iniciativas Escolares: FE_10
+    const iniciativasAct = actions.find(a => a.code === 'FE_10');
+    if (iniciativasAct) {
+        const kpiIniciativas = document.getElementById('kpi-iniciativas');
+        if (kpiIniciativas) kpiIniciativas.textContent = iniciativasAct.goal.toLocaleString('es-CO');
+        const totalExecutedIniciativas = MONTHS.reduce((s, m) => s + (Number(iniciativasAct.executedMonths[m]) || 0), 0);
+        const kpiIniciativasEjecutados = document.getElementById('kpi-iniciativas-ejecutados');
+        if (kpiIniciativasEjecutados) kpiIniciativasEjecutados.textContent = `${totalExecutedIniciativas.toLocaleString('es-CO')} integradas`;
+    }
 }
+
 
 // =============================================
 // CHARTS RENDERING
@@ -1163,7 +1302,7 @@ function goToSummary() {
 }
 
 function switchTab(tabName) {
-    const views = ['tablero', 'eventos', 'noticias', 'estrategias'];
+    const views = ['tablero', 'eventos', 'noticias', 'estrategias', 'indicadores'];
     views.forEach(v => {
         const el = document.getElementById(`view-${v}`);
         if (el) { el.classList.add('hidden'); el.classList.remove('active-view'); }
@@ -1180,7 +1319,8 @@ function switchTab(tabName) {
         tablero: 'Plan de Acción — Avances', 
         eventos: 'Agenda de Eventos', 
         noticias: 'Noticias e Hitos',
-        estrategias: 'Estrategias de Formación e Innovación'
+        estrategias: 'Estrategias de Formación e Innovación',
+        indicadores: 'Indicadores de Gestión 2026'
     };
     const headerTitle = document.getElementById('header-title');
     if (headerTitle) headerTitle.textContent = titles[tabName] || '';
@@ -1199,11 +1339,18 @@ function switchTab(tabName) {
     if (tabName === 'tablero') {
         switchSubTab(currentSubTab);
     }
+    
+    // When switching to indicators, show the summary table by default
+    if (tabName === 'indicadores') {
+        switchIndicatorSubTab('resumen');
+    }
 
     document.body.classList.remove('sidebar-open');
     const sidebar = document.getElementById('sidebar');
     if (sidebar) sidebar.classList.add('-translate-x-full');
 }
+
+
 
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
@@ -1567,6 +1714,7 @@ function handleExcelFile(event) {
 function exportData() {
     const backup = {
         actions: actions.map(a => ({ id: a.id, name: a.name, executedMonths: a.executedMonths, progress: computeActionProgress(a) })),
+        indicators: indicators.map(i => ({ id: i.id, executedMonths: i.executedMonths })),
         events: events,
         news: news,
         strategies: strategies,
@@ -1738,4 +1886,376 @@ function selectStrategyIcon(iconName) {
             btn.className = 'p-2 rounded-lg border flex items-center justify-center text-xs transition-all active:scale-95 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-600 dark:text-slate-350';
         }
     });
+}
+
+// =============================================
+// INDICATORS RENDERING AND ENGINE
+// =============================================
+
+function renderIndicatorsTable() {
+    const tableBody = document.getElementById('indicators-table-body');
+    if (!tableBody) return;
+
+    if (indicators.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400"><i class="fa-solid fa-folder-open text-3xl mb-2 block"></i>No se encontraron indicadores.</td></tr>`;
+        return;
+    }
+
+    let rowsHTML = '';
+    indicators.forEach(ind => {
+        const progress = computeIndicatorProgress(ind);
+        const status = computeIndicatorStatus(ind);
+
+        let statusBadge = '';
+        if (status === 'Planeado') statusBadge = 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700';
+        else if (status === 'En Curso') statusBadge = 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50 animate-pulse';
+        else if (status === 'Completado') statusBadge = 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50';
+
+        const displayExec = ind.executedMonths['Dic'] || 0;
+        const goalText = `${displayExec}% / ${ind.goal}%`;
+
+        rowsHTML += `
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors group cursor-pointer" onclick="switchIndicatorSubTab('${ind.id}')">
+                <td class="py-4 px-4 max-w-sm">
+                    <h5 class="font-semibold text-slate-800 dark:text-slate-100 tracking-tight leading-snug truncate group-hover:text-brand-500 transition-colors" title="${ind.name}">${ind.name}</h5>
+                    <span class="inline-block mt-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-brand-50 text-brand-600 dark:bg-brand-950/30 dark:text-brand-400 border border-brand-100 dark:border-brand-900/50">${ind.frequency}</span>
+                </td>
+                <td class="py-4 px-4 w-40">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div class="h-full bg-brand-500 rounded-full transition-all duration-700" style="width: ${progress}%"></div>
+                        </div>
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 min-w-[32px] text-right">${progress}%</span>
+                    </div>
+                </td>
+                <td class="py-4 px-4 text-xs font-medium text-slate-600 dark:text-slate-300" title="${goalText}">${goalText}</td>
+                <td class="py-4 px-4">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold tracking-wide uppercase ${statusBadge}">${status}</span>
+                </td>
+                <td class="py-4 px-4 text-right whitespace-nowrap">
+                    <button onclick="event.stopPropagation(); switchIndicatorSubTab('${ind.id}')" class="px-3 py-1.5 bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/20 dark:hover:bg-brand-950/40 text-brand-600 dark:text-brand-400 text-xs font-bold rounded-lg transition-all">
+                        Ver ficha <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+
+    tableBody.innerHTML = rowsHTML;
+}
+
+function switchIndicatorSubTab(subTabId) {
+    currentIndicatorTab = subTabId;
+
+    const resumenContainer = document.getElementById('indicadores-resumen');
+    const detailContainer = document.getElementById('indicator-detail');
+
+    if (subTabId === 'resumen') {
+        resumenContainer.classList.remove('hidden');
+        detailContainer.classList.add('hidden');
+        document.getElementById('header-title').textContent = 'Indicadores de Gestión 2026';
+    } else {
+        resumenContainer.classList.add('hidden');
+        detailContainer.classList.remove('hidden');
+        renderIndicatorDetail(subTabId);
+        const ind = indicators.find(i => i.id === subTabId);
+        if (ind) document.getElementById('header-title').textContent = `Ficha Técnica — ${ind.code}`;
+    }
+}
+
+function renderIndicatorDetail(indicatorId) {
+    const ind = indicators.find(i => i.id === indicatorId);
+    const container = document.getElementById('indicator-detail');
+    if (!ind || !container) return;
+
+    const progress = computeIndicatorProgress(ind);
+    const status = computeIndicatorStatus(ind);
+
+    const statusColors = {
+        'Planeado': 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700',
+        'En Curso': 'bg-blue-100 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 animate-pulse',
+        'Completado': 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'
+    };
+    const statusBadge = statusColors[status] || statusColors['Planeado'];
+
+    // Progress ring math (r=36 → circumference = 226.2)
+    const circ = 226.2;
+    const progressOffset = circ - (circ * progress / 100);
+    const progressColor = progress === 100 ? '#10b981' : progress > 50 ? '#6366f1' : '#f59e0b';
+
+    // Team members
+    const names = (ind.responsibleName || '').split(/\n|\//).map(n => n.trim()).filter(n => n.length > 0);
+    const roles = (ind.responsibleRole || '').split(/\n|\//).map(r => r.trim()).filter(r => r.length > 0);
+    const avatarColors = ['from-brand-500 to-indigo-600', 'from-emerald-500 to-teal-600', 'from-amber-500 to-orange-600', 'from-pink-500 to-rose-600', 'from-cyan-500 to-blue-600'];
+
+    let teamHTML = names.map((name, i) => {
+        const initials = name.trim().split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+        const colorGrad = avatarColors[i % avatarColors.length];
+        const role = roles[i] || roles[roles.length - 1] || 'Responsable';
+        return `
+            <div class="flex items-center space-x-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br ${colorGrad} text-white flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-md">${initials}</div>
+                <div class="overflow-hidden">
+                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">${name.trim()}</p>
+                    <p class="text-[10px] text-slate-400 truncate">${role}</p>
+                </div>
+            </div>
+        `;
+    }).join('');
+    if (!teamHTML) {
+        teamHTML = `<p class="text-xs text-slate-400 col-span-full">No se registraron responsables para este indicador.</p>`;
+    }
+
+    // Monthly grid html builder for indicator
+    const monthlyGridHTML = buildIndicatorMonthlyGrid(ind, isAdmin);
+
+    const displayExec = ind.executedMonths['Dic'] || 0;
+
+    container.innerHTML = `
+        <div class="space-y-6 animate-fadeIn">
+
+            <!-- BACK BUTTON -->
+            <button onclick="switchIndicatorSubTab('resumen')" class="flex items-center space-x-2 text-sm text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors font-medium group">
+                <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform duration-200"></i>
+                <span>Volver al Listado de Indicadores</span>
+            </button>
+
+            <!-- HEADER DE LA FICHA -->
+            <div class="glass-card p-6">
+                <div class="flex flex-wrap items-start justify-between gap-4">
+                    <div class="space-y-2 flex-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">${ind.code} (${ind.proceso})</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase bg-brand-100 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800">
+                                <i class="fa-solid fa-chart-line mr-1"></i>${ind.type}
+                            </span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase border ${statusBadge}">${status}</span>
+                        </div>
+                        <h2 class="text-xl md:text-2xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight leading-snug">${ind.name}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI CARDS ROW -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+
+                <!-- META ANUAL -->
+                <div class="glass-card p-6 flex flex-col justify-between sm:col-span-1 relative overflow-hidden group">
+                    <span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase mb-1">Meta Anual</span>
+                    <div class="flex-1 flex flex-col items-center justify-center py-4">
+                        <span class="text-5xl md:text-6xl font-black bg-gradient-to-br from-brand-500 to-indigo-400 bg-clip-text text-transparent tracking-tighter leading-none">${ind.goal}%</span>
+                        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-2 text-center leading-tight">Control de Acumulación: ${ind.control}</span>
+                    </div>
+                    <div class="absolute -right-3 -bottom-3 text-brand-500/[0.05] dark:text-brand-400/[0.06] text-8xl font-black pointer-events-none select-none">%</div>
+                </div>
+
+                <!-- PROGRESO CIRCULAR -->
+                <div class="glass-card p-6 flex flex-col items-center justify-center sm:col-span-1 relative">
+                    <span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase mb-3">Avance del Indicador</span>
+                    <div class="relative w-28 h-28">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
+                            <circle cx="40" cy="40" r="36" fill="transparent" stroke="rgba(226,232,240,0.15)" stroke-width="7"/>
+                            <circle cx="40" cy="40" r="36" fill="transparent" stroke="${progressColor}" stroke-width="7"
+                                stroke-dasharray="${circ}" stroke-dashoffset="${progressOffset}"
+                                stroke-linecap="round" class="transition-all duration-1000 ease-out"/>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span class="text-2xl font-black text-slate-800 dark:text-slate-100">${progress}%</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-center">
+                        <p class="text-xs text-slate-500">Ejecutado: <span class="font-bold text-slate-700 dark:text-slate-200">${displayExec}%</span> (Meta: ${ind.goal}%)</p>
+                    </div>
+                </div>
+
+                <!-- SOPORTE REQUERIDO -->
+                <div class="glass-card p-6 flex flex-col justify-between sm:col-span-1">
+                    <div class="flex items-x-2 mb-3">
+                        <div class="p-2 bg-amber-500/10 dark:bg-amber-500/20 text-amber-500 rounded-lg mr-2">
+                            <i class="fa-solid fa-file-circle-check text-base"></i>
+                        </div>
+                        <span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Soporte Requerido</span>
+                    </div>
+                    <p class="text-sm font-medium text-slate-700 dark:text-slate-200 leading-relaxed flex-1">${ind.support}</p>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/50">
+                        <p class="text-[10px] text-slate-400">Medio de verificación para el cumplimiento de la meta.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FICHA DETALLADA: DESCRIPCIÓN Y FÓRMULA -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-card p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="p-2.5 bg-brand-500/10 dark:bg-brand-500/20 text-brand-500 rounded-xl">
+                            <i class="fa-solid fa-file-lines text-lg"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Definición y Objetivo</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">${ind.description}</p>
+                </div>
+                <div class="glass-card p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="p-2.5 bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-500 rounded-xl">
+                            <i class="fa-solid fa-calculator text-lg"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Fórmula de Cálculo</h3>
+                    </div>
+                    <div class="p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-center">
+                        <code class="text-xs font-semibold text-brand-600 dark:text-brand-400 font-mono block break-words">${ind.formula}</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRILLA MENSUAL PLANIFICADO VS EJECUTADO -->
+            <div class="glass-card p-6" id="indicator-monthly-grid-card-${ind.id}">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2.5 bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-500 rounded-xl">
+                            <i class="fa-solid fa-calendar-check text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Planificación y Avance Mensual</h3>
+                            <p class="text-[10px] text-slate-400 mt-0.5">Meta mensual frente a avance registrado</p>
+                        </div>
+                    </div>
+                    ${isAdmin ? `
+                    <button onclick="saveIndicatorMonthlyExecution('${ind.id}')"
+                        class="flex items-center space-x-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 flex-shrink-0">
+                        <i class="fa-solid fa-floppy-disk text-xs"></i>
+                        <span>Guardar Ejecución</span>
+                    </button>` : ''}
+                </div>
+                ${monthlyGridHTML}
+                ${isAdmin ? `
+                <p class="mt-3 text-[10px] text-slate-400 flex items-center space-x-1">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Modo Administrador: edita los valores de la fila "Ejecutado" y haz clic en "Guardar Ejecución".</span>
+                </p>` : `
+                <p class="mt-3 text-[10px] text-slate-400 flex items-center space-x-1">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>Inicia sesión como Administrador para registrar los logros mensuales.</span>
+                </p>`}
+            </div>
+
+            <!-- EQUIPO RESPONSABLE -->
+            <div class="glass-card p-6">
+                <div class="flex items-center space-x-3 mb-5">
+                    <div class="p-2.5 bg-purple-500/10 dark:bg-purple-500/20 text-purple-500 rounded-xl">
+                        <i class="fa-solid fa-users text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Equipo Responsable</h3>
+                        <p class="text-[10px] text-slate-400 mt-0.5">${ind.responsibleRole}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    ${teamHTML}
+                </div>
+            </div>
+
+        </div>
+    `;
+}
+
+function buildIndicatorMonthlyGrid(ind, adminMode) {
+    const months = MONTHS;
+    const fullMonths = MONTHS_FULL;
+
+    let headersHTML = `<th class="py-2 px-1 text-left text-[10px] font-bold tracking-wider text-slate-400 uppercase w-24 sticky left-0 bg-white dark:bg-slate-900">Indicador</th>`;
+    months.forEach((m, i) => {
+        headersHTML += `<th class="py-2 px-1 text-center text-[10px] font-bold tracking-wider text-slate-400 uppercase min-w-[60px]" title="${fullMonths[i]}">${m}</th>`;
+    });
+    headersHTML += `<th class="py-2 px-1 text-center text-[10px] font-bold tracking-wider text-slate-400 uppercase min-w-[60px]">Meta Final</th>`;
+
+    // Planned row
+    let plannedHTML = `<td class="py-3 px-2 text-xs font-bold text-slate-600 dark:text-slate-300 sticky left-0 bg-white dark:bg-slate-900">
+        <div class="flex items-center space-x-1.5">
+            <span class="w-2 h-2 rounded-full bg-brand-500 flex-shrink-0"></span>
+            <span>Meta Planificada</span>
+        </div>
+    </td>`;
+    months.forEach(m => {
+        const val = ind.plannedMonths[m] || 0;
+        const hasPlan = val > 0;
+        plannedHTML += `<td class="py-3 px-1 text-center">
+            <span class="inline-block px-2 py-1 rounded-lg text-xs font-bold ${hasPlan ? 'bg-brand-100 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300' : 'text-slate-300 dark:text-slate-600'}">
+                ${hasPlan ? `${val}%` : '—'}
+            </span>
+        </td>`;
+    });
+    plannedHTML += `<td class="py-3 px-1 text-center"><span class="inline-block px-2 py-1 rounded-lg text-xs font-bold bg-brand-500 text-white">${ind.goal}%</span></td>`;
+
+    // Executed row
+    let executedHTML = `<td class="py-3 px-2 text-xs font-bold text-slate-600 dark:text-slate-300 sticky left-0 bg-white dark:bg-slate-900">
+        <div class="flex items-center space-x-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0"></span>
+            <span>Ejecutado</span>
+        </div>
+    </td>`;
+    months.forEach(m => {
+        const val = Number(ind.executedMonths[m]) || 0;
+        const planned = ind.plannedMonths[m] || 0;
+        const metOrExceeded = val >= planned && planned > 0;
+        const hasExec = val > 0;
+
+        if (adminMode) {
+            executedHTML += `<td class="py-2 px-1 text-center">
+                <input type="number" id="exec-ind-${ind.id}-${m}" value="${val}" min="0" max="100"
+                    class="w-14 text-center text-xs font-bold py-1.5 px-1 rounded-lg border-2 ${metOrExceeded ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200'}
+                    focus:outline-none focus:border-brand-500 transition-colors">%
+            </td>`;
+        } else {
+            const cellClass = hasExec
+                ? (metOrExceeded ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300')
+                : 'text-slate-300 dark:text-slate-600';
+            executedHTML += `<td class="py-3 px-1 text-center">
+                <span class="inline-block px-2 py-1 rounded-lg text-xs font-bold ${cellClass}">
+                    ${hasExec ? `${val}%` : '—'}
+                </span>
+            </td>`;
+        }
+    });
+
+    const displayExec = ind.executedMonths['Dic'] || 0;
+    const execTotalClass = displayExec >= ind.goal ? 'bg-emerald-500' : displayExec > 0 ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-600';
+    executedHTML += `<td class="py-3 px-1 text-center"><span class="inline-block px-2 py-1 rounded-lg text-xs font-bold ${execTotalClass} text-white">${displayExec}%</span></td>`;
+
+    return `
+        <div class="overflow-x-auto -mx-2 px-2">
+            <table class="w-full border-collapse min-w-max">
+                <thead>
+                    <tr class="border-b border-slate-150 dark:border-slate-700/50">${headersHTML}</tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
+                    <tr>${plannedHTML}</tr>
+                    <tr>${executedHTML}</tr>
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function saveIndicatorMonthlyExecution(indicatorId) {
+    const ind = indicators.find(i => i.id === indicatorId);
+    if (!ind) return;
+
+    let changed = false;
+    MONTHS.forEach(m => {
+        const input = document.getElementById(`exec-ind-${indicatorId}-${m}`);
+        if (input) {
+            const newVal = Math.min(100, Math.max(0, parseInt(input.value) || 0));
+            if (newVal !== ind.executedMonths[m]) {
+                ind.executedMonths[m] = newVal;
+                changed = true;
+            }
+        }
+    });
+
+    if (changed) {
+        saveIndicators();
+        showSaveFeedback(indicatorId);
+        renderIndicatorsTable();
+        renderIndicatorDetail(indicatorId);
+    }
 }

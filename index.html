@@ -73,7 +73,7 @@
                     <button onclick="togglePlanAccionMenu()" id="btn-tablero"
                         class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50 btn-active">
                         <i class="fa-solid fa-chart-line text-base flex-shrink-0"></i>
-                        <span class="text-sm flex-1 text-left">Plan de Acción</span>
+                        <span class="text-sm flex-1 text-left">Plan de Acción 2026</span>
                         <i class="fa-solid fa-chevron-down text-[10px] submenu-chevron opacity-70" id="submenu-chevron"></i>
                     </button>
 
@@ -82,6 +82,13 @@
                         <!-- Populated dynamically by JS -->
                     </div>
                 </div>
+
+                <!-- Indicadores 2026 -->
+                <button onclick="switchTab('indicadores')" id="btn-indicadores"
+                    class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50">
+                    <i class="fa-solid fa-gauge-high text-base flex-shrink-0"></i>
+                    <span class="text-sm">Indicadores 2026</span>
+                </button>
 
                 <!-- Estrategias -->
                 <button onclick="switchTab('estrategias')" id="btn-estrategias"
@@ -194,8 +201,8 @@
                     <!-- ---- RESUMEN GENERAL (default view) ---- -->
                     <div id="tablero-resumen" class="space-y-7">
 
-                        <!-- KPI CARDS GRID -->
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                        <!-- KPI CARDS GRID (7 Cards) -->
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                             <!-- KPI 1: Acciones Totales -->
                             <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group">
                                 <div class="space-y-2">
@@ -209,12 +216,12 @@
                                 <div class="absolute -right-4 -bottom-4 text-brand-500/[0.04] text-8xl font-black pointer-events-none select-none">#</div>
                             </div>
 
-                            <!-- KPI 2: Eventos Programados -->
+                            <!-- KPI 2: Meta Eventos -->
                             <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group cursor-pointer" onclick="switchTab('eventos')" title="Ver agenda de eventos">
                                 <div class="space-y-2">
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Eventos</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Meta Eventos</span>
                                     <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight" id="kpi-eventos-totales">0</h3>
-                                    <span class="text-xs text-slate-400">En la agenda 2026</span>
+                                    <span class="text-xs text-slate-400" id="kpi-eventos-ejecutados">0 ejecutados</span>
                                 </div>
                                 <div class="p-3.5 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                                     <i class="fa-solid fa-calendar-days text-xl"></i>
@@ -222,12 +229,12 @@
                                 <div class="absolute -right-4 -bottom-4 text-emerald-500/[0.04] text-8xl font-black pointer-events-none select-none">E</div>
                             </div>
 
-                            <!-- KPI 3: Meta Centros de Interés -->
-                            <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group cursor-pointer" onclick="switchSubTab('act-4')" title="Ver detalle de Centros de Interés">
+                            <!-- KPI 3: Centros de Interés Nuevos -->
+                            <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group cursor-pointer" onclick="switchSubTab('act-4')" title="Ver detalle de Centros de Interés Nuevos">
                                 <div class="space-y-2">
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Meta CI Total</span>
-                                    <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight" id="kpi-ci">1,500</h3>
-                                    <span class="text-xs text-slate-400">Centros de Interés 2026</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">CI Nuevos</span>
+                                    <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight" id="kpi-ci-nuevos">0</h3>
+                                    <span class="text-xs text-slate-400" id="kpi-ci-nuevos-ejecutados">0 creados</span>
                                 </div>
                                 <div class="p-3.5 bg-purple-500/10 dark:bg-purple-500/20 text-purple-500 dark:text-purple-400 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                                     <i class="fa-solid fa-school text-xl"></i>
@@ -235,17 +242,69 @@
                                 <div class="absolute -right-4 -bottom-4 text-purple-500/[0.04] text-8xl font-black pointer-events-none select-none">CI</div>
                             </div>
 
-                            <!-- KPI 4: Meta Docentes -->
-                            <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group">
+                            <!-- KPI 4: Centros de Interés Fortalecidos -->
+                            <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group cursor-pointer" onclick="switchSubTab('act-5')" title="Ver detalle de Centros de Interés Fortalecidos">
+                                <div class="space-y-2">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">CI Fortalecidos</span>
+                                    <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight" id="kpi-ci-fortalecidos">0</h3>
+                                    <span class="text-xs text-slate-400" id="kpi-ci-fortalecidos-ejecutados">0 acompañados</span>
+                                </div>
+                                <div class="p-3.5 bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-500 dark:text-indigo-400 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fa-solid fa-school-circle-check text-xl"></i>
+                                </div>
+                                <div class="absolute -right-4 -bottom-4 text-indigo-500/[0.04] text-8xl font-black pointer-events-none select-none">CIF</div>
+                            </div>
+
+                            <!-- KPI 5: Meta Docentes -->
+                            <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group cursor-pointer" onclick="switchSubTab('act-3')" title="Ver detalle de Docentes">
                                 <div class="space-y-2">
                                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Meta Docentes</span>
-                                    <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight" id="kpi-docentes">3,000</h3>
-                                    <span class="text-xs text-slate-400">Formados y acompañados</span>
+                                    <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight" id="kpi-docentes">0</h3>
+                                    <span class="text-xs text-slate-400" id="kpi-docentes-ejecutados">0 formados</span>
                                 </div>
                                 <div class="p-3.5 bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-500 dark:text-cyan-400 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                                     <i class="fa-solid fa-users text-xl"></i>
                                 </div>
                                 <div class="absolute -right-4 -bottom-4 text-cyan-500/[0.04] text-8xl font-black pointer-events-none select-none">D</div>
+                            </div>
+
+                            <!-- KPI 6: Meta Estudiantes -->
+                            <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group cursor-pointer" onclick="switchSubTab('act-8')" title="Ver detalle de Estudiantes">
+                                <div class="space-y-2">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Meta Estudiantes</span>
+                                    <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight" id="kpi-estudiantes">0</h3>
+                                    <span class="text-xs text-slate-400" id="kpi-estudiantes-ejecutados">0 formados</span>
+                                </div>
+                                <div class="p-3.5 bg-amber-500/10 dark:bg-amber-500/20 text-amber-500 dark:text-amber-400 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fa-solid fa-user-graduate text-xl"></i>
+                                </div>
+                                <div class="absolute -right-4 -bottom-4 text-amber-500/[0.04] text-8xl font-black pointer-events-none select-none">Est</div>
+                            </div>
+
+                            <!-- KPI 7: Meta Familia -->
+                            <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group cursor-pointer" onclick="switchSubTab('act-7')" title="Ver detalle de Actividades para la Familia">
+                                <div class="space-y-2">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Meta Familia</span>
+                                    <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight" id="kpi-familia">0</h3>
+                                    <span class="text-xs text-slate-400" id="kpi-familia-ejecutados">0 capacitados</span>
+                                </div>
+                                <div class="p-3.5 bg-pink-500/10 dark:bg-pink-500/20 text-pink-500 dark:text-pink-400 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fa-solid fa-people-roof text-xl"></i>
+                                </div>
+                                <div class="absolute -right-4 -bottom-4 text-pink-500/[0.04] text-8xl font-black pointer-events-none select-none">Fam</div>
+                            </div>
+
+                            <!-- KPI 8: INICIATIVAS ESCOLARES -->
+                            <div class="glass-card p-5 md:p-6 flex items-center justify-between relative overflow-hidden group cursor-pointer" onclick="switchSubTab('act-10')" title="Ver detalle de Iniciativas Escolares">
+                                <div class="space-y-2">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">INICIATIVAS ESCOLARES</span>
+                                    <h3 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight" id="kpi-iniciativas">0</h3>
+                                    <span class="text-xs text-slate-400" id="kpi-iniciativas-ejecutados">0 integradas</span>
+                                </div>
+                                <div class="p-3.5 bg-rose-500/10 dark:bg-rose-500/20 text-rose-500 dark:text-rose-400 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fa-solid fa-laptop-code text-xl"></i>
+                                </div>
+                                <div class="absolute -right-4 -bottom-4 text-rose-500/[0.04] text-8xl font-black pointer-events-none select-none">Ini</div>
                             </div>
                         </div>
 
@@ -488,6 +547,41 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="strategies-grid">
                         <!-- Strategies loaded dynamically -->
+                    </div>
+                </section>
+
+                <!-- ==================== TAB 5: INDICADORES 2026 ==================== -->
+                <section id="view-indicadores" class="space-y-8 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <h3 class="text-xl font-extrabold text-slate-800 dark:text-slate-100">Indicadores de Gestión 2026</h3>
+                            <p class="text-xs text-slate-400">Monitoreo de metas anuales e indicadores de resultado de la subdirección.</p>
+                        </div>
+                    </div>
+
+                    <!-- INDICATORS TABLE LIST -->
+                    <div id="indicadores-resumen" class="glass-card p-6 space-y-5">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-150 dark:border-darkbg-border text-slate-400 text-[10px] font-extrabold uppercase tracking-wider">
+                                        <th class="py-3 px-4">Indicador / Frecuencia</th>
+                                        <th class="py-3 px-4 text-center">Avance</th>
+                                        <th class="py-3 px-4">Ejecutado / Meta</th>
+                                        <th class="py-3 px-4">Tipo</th>
+                                        <th class="py-3 px-4 text-right"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="indicators-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/50 text-sm">
+                                    <!-- Loaded dynamically by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- INDICATOR DETAIL CONTAINER -->
+                    <div id="indicator-detail" class="hidden">
+                        <!-- Populated dynamically by JS -->
                     </div>
                 </section>
 
