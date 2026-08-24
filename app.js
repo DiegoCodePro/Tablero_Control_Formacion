@@ -1,5 +1,22 @@
 // ==================== ENGINE & BUSINESS LOGIC: TECNOLOGÍAS PARA APRENDER ====================
 
+// ==============================================================================
+// ☁️ CONFIGURACIÓN DE SUPABASE (BASE DE DATOS CENTRALIZADA EN LA NUBE)
+// ==============================================================================
+// Pega aquí la URL y la Anon Key de tu proyecto en Supabase (Settings -> API)
+const SUPABASE_URL = 'https://adyzbimnjtqcgubuxqyr.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_sxfWTa8gLJGe0N2P4w2hgA_43QvxPDR';
+
+let supabaseClient = null;
+if (typeof supabase !== 'undefined' && SUPABASE_URL && !SUPABASE_URL.includes('TU_SUPABASE_URL') && !SUPABASE_ANON_KEY.includes('TU_SUPABASE_ANON')) {
+    try {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('✅ Supabase conectado exitosamente.');
+    } catch (e) {
+        console.warn('⚠️ Error al inicializar cliente de Supabase:', e);
+    }
+}
+
 //// --- DATA SYSTEM (LOCAL STORAGE PERSISTENCE) ---
 const STORAGE_KEYS = {
     ACTIONS: 'tpa_dashboard_actions_v2',
@@ -365,10 +382,129 @@ function loadActions() {
     return DEFAULT_ACTIONS.map(d => ({ ...d }));
 }
 
+// ==============================================================================
+// ☁️ FUNCIONES DE SINCRONIZACIÓN CON SUPABASE
+// ==============================================================================
+async function fetchFromSupabase(key) {
+    if (!supabaseClient) return null;
+    try {
+        const { data, error } = await supabaseClient
+            .from('dashboard_data')
+            .select('data')
+            .eq('key', key)
+            .single();
+        if (error) {
+            // Error code PGRST116 means no row found (initial run)
+            if (error.code !== 'PGRST116') console.warn(`Supabase fetch warning for ${key}:`, error.message);
+            return null;
+        }
+        return data ? data.data : null;
+    } catch (err) {
+        console.warn(`Error conectando a Supabase para ${key}:`, err);
+        return null;
+    }
+}
+
+async function saveToSupabase(key, payload) {
+    if (!supabaseClient) return;
+    try {
+        const { error } = await supabaseClient
+            .from('dashboard_data')
+            .upsert({
+                key: key,
+                data: payload,
+                updated_at: new Date().toISOString()
+            });
+        if (error) console.error(`Error guardando en Supabase (${key}):`, error.message);
+        else console.log(`☁️ Sincronizado en la nube: ${key}`);
+    } catch (err) {
+        console.error(`Error en petición a Supabase (${key}):`, err);
+    }
+}
+
+// Sincronización inicial desde la nube al cargar la página
+async function initCloudSync() {
+    if (!supabaseClient) return;
+
+    try {
+        const [cloudActions, cloudIndicators, cloudEvents, cloudNews, cloudStrategies] = await Promise.all([
+            fetchFromSupabase('actions'),
+            fetchFromSupabase('indicators'),
+            fetchFromSupabase('events'),
+            fetchFromSupabase('news'),
+            fetchFromSupabase('strategies')
+        ]);
+
+        let hasUpdates = false;
+
+        if (cloudActions && Array.isArray(cloudActions)) {
+            actions = DEFAULT_ACTIONS.map(def => {
+                const saved = cloudActions.find(p => p.id === def.id);
+                if (saved && saved.executedMonths) {
+                    return { ...def, executedMonths: saved.executedMonths };
+                }
+                return { ...def };
+            });
+            localStorage.setItem(STORAGE_KEYS.ACTIONS, JSON.stringify(cloudActions));
+            hasUpdates = true;
+        } else {
+            // Inicializar fila en Supabase con los datos base
+            saveToSupabase('actions', actions.map(act => ({ id: act.id, executedMonths: act.executedMonths })));
+        }
+
+        if (cloudIndicators && Array.isArray(cloudIndicators)) {
+            indicators = DEFAULT_INDICATORS.map(def => {
+                const saved = cloudIndicators.find(p => p.id === def.id);
+                if (saved && saved.executedMonths) {
+                    return { ...def, executedMonths: saved.executedMonths };
+                }
+                return { ...def };
+            });
+            localStorage.setItem(STORAGE_KEYS.INDICATORS, JSON.stringify(cloudIndicators));
+            hasUpdates = true;
+        } else {
+            saveToSupabase('indicators', indicators.map(ind => ({ id: ind.id, executedMonths: ind.executedMonths })));
+        }
+
+        if (cloudEvents && Array.isArray(cloudEvents)) {
+            events = cloudEvents;
+            localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(events));
+            hasUpdates = true;
+        } else {
+            saveToSupabase('events', events);
+        }
+
+        if (cloudNews && Array.isArray(cloudNews)) {
+            news = cloudNews;
+            localStorage.setItem(STORAGE_KEYS.NEWS, JSON.stringify(news));
+            hasUpdates = true;
+        } else {
+            saveToSupabase('news', news);
+        }
+
+        if (cloudStrategies && Array.isArray(cloudStrategies)) {
+            strategies = cloudStrategies;
+            localStorage.setItem(STORAGE_KEYS.STRATEGIES, JSON.stringify(strategies));
+            hasUpdates = true;
+        } else {
+            saveToSupabase('strategies', strategies);
+        }
+
+        if (hasUpdates) {
+            renderAllData();
+            if (currentSubTab !== 'resumen') renderActionDetail(currentSubTab);
+            if (currentIndicatorTab !== 'resumen') renderIndicatorDetail(currentIndicatorTab);
+        }
+    } catch (e) {
+        console.warn('Error sincronizando datos iniciales de Supabase:', e);
+    }
+}
+
 function saveActions() {
     // Only persist id + executedMonths to avoid stale data
     const toSave = actions.map(act => ({ id: act.id, executedMonths: act.executedMonths }));
     localStorage.setItem(STORAGE_KEYS.ACTIONS, JSON.stringify(toSave));
+    saveToSupabase('actions', toSave);
 }
 
 // --- LOAD INDICATORS: Merge persisted executed data over defaults ---
@@ -389,6 +525,7 @@ function loadIndicators() {
 function saveIndicators() {
     const toSave = indicators.map(ind => ({ id: ind.id, executedMonths: ind.executedMonths }));
     localStorage.setItem(STORAGE_KEYS.INDICATORS, JSON.stringify(toSave));
+    saveToSupabase('indicators', toSave);
 }
 
 // --- INITIALIZER ---
@@ -423,6 +560,9 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSubIndicesMenu();
     renderAllData();
     switchSubTab('resumen');
+
+    // Sincronizar automáticamente con Supabase si está configurado
+    initCloudSync();
 
 });
 
@@ -1429,6 +1569,7 @@ function saveEvent(e) {
     }
 
     localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(events));
+    saveToSupabase('events', events);
     renderEvents();
     renderKPIs();
     closeEventModal();
@@ -1443,6 +1584,7 @@ function deleteEvent(id) {
     if (confirm('¿Estás seguro de que deseas cancelar este evento?')) {
         events = events.filter(e => e.id !== id);
         localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(events));
+        saveToSupabase('events', events);
         renderEvents();
         renderKPIs();
     }
@@ -1497,6 +1639,7 @@ function saveNews(e) {
     }
 
     localStorage.setItem(STORAGE_KEYS.NEWS, JSON.stringify(news));
+    saveToSupabase('news', news);
     renderNews();
     closeNewsModal();
 }
@@ -1510,6 +1653,7 @@ function deleteNews(id) {
     if (confirm('¿Estás seguro de que deseas eliminar esta noticia?')) {
         news = news.filter(n => n.id !== id);
         localStorage.setItem(STORAGE_KEYS.NEWS, JSON.stringify(news));
+        saveToSupabase('news', news);
         renderNews();
     }
 }
@@ -1852,6 +1996,7 @@ function saveEstrategia(e) {
     }
 
     localStorage.setItem(STORAGE_KEYS.STRATEGIES, JSON.stringify(strategies));
+    saveToSupabase('strategies', strategies);
     renderStrategies();
     closeEstrategiaModal();
 }
@@ -1865,6 +2010,7 @@ function deleteEstrategia(id) {
     if (confirm('¿Estás seguro de que deseas eliminar esta estrategia?')) {
         strategies = strategies.filter(s => s.id !== id);
         localStorage.setItem(STORAGE_KEYS.STRATEGIES, JSON.stringify(strategies));
+        saveToSupabase('strategies', strategies);
         renderStrategies();
     }
 }
