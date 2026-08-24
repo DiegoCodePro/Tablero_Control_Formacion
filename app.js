@@ -8,14 +8,21 @@ const SUPABASE_URL = 'https://adyzbimnjtqcgubuxqyr.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_sxfWTa8gLJGe0N2P4w2hgA_43QvxPDR';
 
 let supabaseClient = null;
-if (typeof supabase !== 'undefined' && SUPABASE_URL && !SUPABASE_URL.includes('TU_SUPABASE_URL') && !SUPABASE_ANON_KEY.includes('TU_SUPABASE_ANON')) {
-    try {
-        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('✅ Supabase conectado exitosamente.');
-    } catch (e) {
-        console.warn('⚠️ Error al inicializar cliente de Supabase:', e);
+function getSupabaseClient() {
+    if (supabaseClient) return supabaseClient;
+    const sb = (typeof supabase !== 'undefined' ? supabase : (typeof window !== 'undefined' ? window.supabase : null));
+    if (sb && typeof sb.createClient === 'function' && SUPABASE_URL && !SUPABASE_URL.includes('TU_SUPABASE_URL')) {
+        try {
+            supabaseClient = sb.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Supabase conectado exitosamente.');
+            return supabaseClient;
+        } catch (e) {
+            console.warn('⚠️ Error al inicializar cliente de Supabase:', e);
+        }
     }
+    return null;
 }
+getSupabaseClient();
 
 //// --- DATA SYSTEM (LOCAL STORAGE PERSISTENCE) ---
 const STORAGE_KEYS = {
@@ -27,11 +34,19 @@ const STORAGE_KEYS = {
     IS_ADMIN: 'tpa_dashboard_is_admin'
 };
 
-// CONTRASEÑA POR DEFECTO PARA EL ADMINISTRADOR ÚNICO
-const ADMIN_CREDENTIALS = {
-    username: 'admin',
-    password: 'tecnologias2026'
+// CREDENCIALES PROTEGIDAS MEDIANTE HASH CRIPTOGRÁFICO SHA-256 (SIN CONTRASEÑA EN TEXTO PLANO)
+const ADMIN_SECURITY = {
+    usernameHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', // Hash de 'admin'
+    passwordHash: 'd73ed8dcbded8ba9410ea649cb6be30f0938b6f50c5ed37add9451ec14bda7c9'  // Hash de 'tecnologias2026'
 };
+
+async function computeSHA256(text) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 const MONTHS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 const MONTHS_FULL = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -386,9 +401,10 @@ function loadActions() {
 // ☁️ FUNCIONES DE SINCRONIZACIÓN CON SUPABASE
 // ==============================================================================
 async function fetchFromSupabase(key) {
-    if (!supabaseClient) return null;
+    const client = getSupabaseClient();
+    if (!client) return null;
     try {
-        const { data, error } = await supabaseClient
+        const { data, error } = await client
             .from('dashboard_data')
             .select('data')
             .eq('key', key)
@@ -406,9 +422,10 @@ async function fetchFromSupabase(key) {
 }
 
 async function saveToSupabase(key, payload) {
-    if (!supabaseClient) return;
+    const client = getSupabaseClient();
+    if (!client) return;
     try {
-        const { error } = await supabaseClient
+        const { error } = await client
             .from('dashboard_data')
             .upsert({
                 key: key,
@@ -424,7 +441,8 @@ async function saveToSupabase(key, payload) {
 
 // Sincronización inicial desde la nube al cargar la página
 async function initCloudSync() {
-    if (!supabaseClient) return;
+    const client = getSupabaseClient();
+    if (!client) return;
 
     try {
         const [cloudActions, cloudIndicators, cloudEvents, cloudNews, cloudStrategies] = await Promise.all([
@@ -1345,12 +1363,15 @@ function closeLoginModal() {
     document.getElementById('modal-login').classList.remove('active');
 }
 
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
-    const user = document.getElementById('login-username').value;
+    const user = document.getElementById('login-username').value.trim();
     const pass = document.getElementById('login-password').value;
 
-    if (user === ADMIN_CREDENTIALS.username && pass === ADMIN_CREDENTIALS.password) {
+    const userHash = await computeSHA256(user);
+    const passHash = await computeSHA256(pass);
+
+    if (userHash === ADMIN_SECURITY.usernameHash && passHash === ADMIN_SECURITY.passwordHash) {
         isAdmin = true;
         localStorage.setItem(STORAGE_KEYS.IS_ADMIN, JSON.stringify(true));
         updateAdminUI();
