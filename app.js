@@ -1408,32 +1408,19 @@ async function handleLogin(event) {
 
             if (error) {
                 console.warn('Supabase Auth error:', error.message);
-                // Fallback para prueba local si no se ha creado aún el usuario en Supabase
-                if (email.toLowerCase() === 'dmarias@cpe.gov.co' && pass === 'TpA2026') {
-                    loginSuccess = true;
-                } else {
-                    if (errorTxt) errorTxt.textContent = 'Correo o contraseña incorrectos.';
-                    if (errorBox) errorBox.classList.remove('hidden');
-                }
+                if (errorTxt) errorTxt.textContent = 'Correo o contraseña incorrectos.';
+                if (errorBox) errorBox.classList.remove('hidden');
             } else if (data && data.user) {
                 loginSuccess = true;
             }
         } catch (err) {
             console.error('Error durante autenticación con Supabase:', err);
-            if (email.toLowerCase() === 'dmarias@cpe.gov.co' && pass === 'TpA2026') {
-                loginSuccess = true;
-            } else {
-                if (errorTxt) errorTxt.textContent = 'Error al conectar con el servidor de autenticación.';
-                if (errorBox) errorBox.classList.remove('hidden');
-            }
-        }
-    } else {
-        if (email.toLowerCase() === 'dmarias@cpe.gov.co' && pass === 'TpA2026') {
-            loginSuccess = true;
-        } else {
-            if (errorTxt) errorTxt.textContent = 'Correo o contraseña incorrectos.';
+            if (errorTxt) errorTxt.textContent = 'Error al conectar con el servidor de autenticación.';
             if (errorBox) errorBox.classList.remove('hidden');
         }
+    } else {
+        if (errorTxt) errorTxt.textContent = 'Servicio de autenticación no disponible.';
+        if (errorBox) errorBox.classList.remove('hidden');
     }
 
     if (loginSuccess) {
